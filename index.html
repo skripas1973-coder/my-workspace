@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Рабочий стол</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+    <style id="theme-style"></style>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Название */
+        .app-title-container {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
+        }
+        .app-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            background-image: url('image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="50"><rect width="100%" height="100%" fill="%235d4037"/><path d="M0,0 Q20,5 40,0 T80,0 Q100,5 120,0 T160,0 Q180,5 200,0 L200,50 L0,50 Z" fill="%234e342e"/></svg>');
+            background-size: cover;
+            letter-spacing: -0.5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            font-family: 'Caveat', 'Dancing Script', 'Brush Script MT', cursive;
+        }
+        .leaf {
+            width: 16px;
+            height: 16px;
+            background-image: url('image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.5 2 5.5 4 4 7c-1.5 3 0 7 2 9 2 2 5 3 8 3 3 0 6-1 8-3 2-2 3.5-6 2-9-1.5-3-4.5-5-8-5zm0 2c2.5 0 4.5 1.5 5.5 4-1 2.5-3 4-5.5 4S7.5 10.5 6.5 8C7.5 5.5 9.5 4 12 4z" fill="%234CAF50"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        /* Заголовок "Рабочий стол" */
+        .workspace-title {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Caveat', 'Dancing Script', 'Brush Script MT', cursive;
+            font-size: 30px;
+            font-weight: 700;
+            color: #333;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        /* Кнопка темы */
+        .theme-toggle {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            padding: 6px 12px;
+            font-size: 14px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            background: rgba(0,0,0,0.2);
+            color: white;
+            backdrop-filter: blur(5px);
+            z-index: 10;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 10px;
+        }
+
+        /* Ширина колонок */
+        .left-panel, .right-panel {
+            flex: 0 0 220px;
+        }
+        .center-panel {
+            flex: 1;
+            min-width: 600px;
+        }
+
+        .panel {
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .quick-links { margin-top: 25px; }
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .quick-link {
+            display: block;
+            padding: 8px 6px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        /* Блокнот */
+        .notepad {
+            width: 100%;
+            height: 400px;
+            padding: 15px;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            border-radius: 8px;
+            resize: none;
+        }
+        .notepad-toolbar {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .notepad-btn {
+            padding: 6px 10px;
+            font-size: 13px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* История заметок */
+        .notes-history {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .notes-history h3 {
+            margin-bottom: 8px;
+        }
+        .note-item {
+            padding: 6px 8px;
+            margin: 4px 0;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            cursor: pointer;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .note-item:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* Контакт */
+        .contact-info {
+            margin-top: 20px;
+            font-size: 14px;
+            text-align: center;
+            color: #666;
+        }
+
+        /* Калькулятор */
+        .calculator {
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+        .display {
+            width: 100%;
+            height: 50px;
+            font-size: 20px;
+            text-align: right;
+            padding: 0 12px;
+            margin-bottom: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .memory-indicator {
+            font-size: 13px;
+            text-align: right;
+            margin-bottom: 5px;
+            min-height: 16px;
+        }
+        .history {
+            width: 100%;
+            height: 80px;
+            border-radius: 8px;
+            padding: 8px;
+            margin-top: 12px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 13px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+        }
+        button {
+            height: 42px;
+            font-size: 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Календарь с задачами */
+        .calendar {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .calendar-header {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .calendar-weekdays, .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            font-size: 12px;
+        }
+        .calendar-day {
+            padding: 6px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+        }
+        .calendar-day.today {
+            font-weight: bold;
+            background-color: #e3f2fd;
+        }
+        .calendar-day:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Анимация моргания */
+        .blink-red {
+            animation: blinkRed 1s infinite;
+        }
+        .blink-blue {
+            animation: blinkBlue 1s infinite;
+        }
+        @keyframes blinkRed {
+            0% { background-color: #ff9500; }
+            50% { background-color: #ff5722; }
+            100% { background-color: #ff9500; }
+        }
+        @keyframes blinkBlue {
+            0% { background-color: #2196F3; }
+            50% { background-color: #0d47a1; }
+            100% { background-color: #2196F3; }
+        }
+
+        /* Часы */
+        .small-clock {
+            font-size: 14px;
+            margin-top: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-align: center;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        /* Цитаты */
+        .quotes {
+            margin-top: 25px;
+        }
+        .quote-box {
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 18px;
+            line-height: 1.5;
+            text-align: center;
+            font-family: 'Caveat', 'Dancing Script', 'Brush Script MT', cursive;
+        }
+        .quote-btn {
+            display: block;
+            width: 100%;
+            margin-top: 12px;
+            padding: 10px;
+            font-size: 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        /* Таймер */
+        .timer {
+            margin-top: 25px;
+        }
+        .timer-title {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .timer-input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .timer-controls {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        .timer-btn {
+            padding: 6px 10px;
+            font-size: 13px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            flex: 1;
+        }
+        .timer-display {
+            font-family: monospace;
+            font-size: 16px;
+            text-align: center;
+            padding: 6px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Название -->
+    <div class="app-title-container">
+        <div class="app-title">скрипа. рядом</div>
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+    </div>
+
+    <!-- Надпись "Рабочий стол" -->
+    <div class="workspace-title">Рабочий стол</div>
+
+    <!-- Кнопка темы -->
+    <button class="theme-toggle" onclick="toggleTheme()">🌓 Тема</button>
+
+    <!-- Три колонки -->
+    <div class="main-content">
+        <!-- Левая панель -->
+        <div class="left-panel">
+            <div class="panel">
+                <h3 style="margin-bottom: 12px;">Поиск в Google</h3>
+                <form action="https://www.google.com/search" target="_blank">
+                    <input type="text" name="q" class="search-box" placeholder="Запрос...">
+                </form>
+
+                <div class="quick-links">
+                    <h3 style="margin: 15px 0 10px;">Быстрые ссылки</h3>
+                    <div class="links-grid">
+                        <a href="https://www.youtube.com" target="_blank" class="quick-link">📺 YouTube</a>
+                        <a href="https://web.telegram.org" target="_blank" class="quick-link">💬 Telegram</a>
+                        <a href="https://chat.qwen.ai" target="_blank" class="quick-link">🧠 Qwen</a>
+                        <a href="https://github.com/skripas1973-coder/my-workspace" target="_blank" class="quick-link">📁 GitHub</a>
+                    </div>
+                </div>
+
+                <!-- Цитаты -->
+                <div class="quotes">
+                    <h3 style="margin: 25px 0 10px;">Цитата дня</h3>
+                    <div class="quote-box" id="quote">Загрузка цитаты...</div>
+                    <button class="quote-btn" onclick="loadRandomQuote()">Следующая</button>
+                </div>
+
+                <!-- Таймер -->
+                <div class="timer">
+                    <h3 style="margin: 25px 0 10px;">Таймер</h3>
+                    <div class="timer-title">Минуты:</div>
+                    <input type="number" id="timerInput" class="timer-input" min="1" max="60" value="5">
+                    <div class="timer-controls">
+                        <button class="timer-btn" style="background:#4CAF50;" onclick="startTimer()">Старт</button>
+                        <button class="timer-btn" style="background:#FF9800;" onclick="pauseTimer()">Пауза</button>
+                        <button class="timer-btn" style="background:#f44336;" onclick="resetTimer()">Сброс</button>
+                    </div>
+                    <div class="timer-display" id="timerDisplay">05:00</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Центр: БЛОКНОТ -->
+        <div class="center-panel">
+            <div class="panel">
+                <h3 style="margin-bottom: 12px;">Блокнот</h3>
+                <textarea id="notepad" class="notepad" placeholder="Ваши заметки, идеи, черновики..."></textarea>
+                <div class="notepad-toolbar">
+                    <button class="notepad-btn" onclick="copyNotepad()">Копировать</button>
+                    <button class="notepad-btn clear" onclick="clearNotepad()">Очистить</button>
+                    <button class="notepad-btn save" onclick="saveNotepad()">TXT</button>
+                </div>
+
+                <div class="notes-history">
+                    <h3>Последние заметки</h3>
+                    <div id="notesHistoryList"></div>
+                </div>
+
+                <!-- Контакт -->
+                <div class="contact-info">
+                    💬 Хотите предложить улучшение?<br>
+                    Напишите автору: <a href="mailto:skripas@inbox.ru">skripas@inbox.ru</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Правая панель: КАЛЬКУЛЯТОР + КАЛЕНДАРЬ С ЗАДАЧАМИ -->
+        <div class="right-panel">
+            <div class="panel" style="padding: 0;">
+                <div class="calculator">
+                    <div class="memory-indicator" id="memoryIndicator"></div>
+                    <input type="text" class="display" id="display" disabled placeholder="0" onclick="copyResult()">
+                    <div class="buttons" id="buttons">
+                        <button class="memory" onclick="handleInput('MC')">MC</button>
+                        <button class="memory" onclick="handleInput('MR')">MR</button>
+                        <button class="memory" onclick="handleInput('M+')">M+</button>
+                        <button class="memory" onclick="handleInput('M−')">M−</button>
+                        <button class="function" onclick="handleInput('±')">±</button>
+
+                        <button class="function" onclick="handleInput('√')">√</button>
+                        <button class="function" onclick="handleInput('x²')">x²</button>
+                        <button class="function" onclick="handleInput('1/x')">1/x</button>
+                        <button class="clear" onclick="handleInput('⌫')">⌫</button>
+                        <button class="clear" onclick="handleInput('C')">C</button>
+
+                        <button onclick="handleInput('7')">7</button>
+                        <button onclick="handleInput('8')">8</button>
+                        <button onclick="handleInput('9')">9</button>
+                        <button class="operator" onclick="handleInput('/')">/</button>
+                        <button class="function" onclick="handleInput('%')">%</button>
+
+                        <button onclick="handleInput('4')">4</button>
+                        <button onclick="handleInput('5')">5</button>
+                        <button onclick="handleInput('6')">6</button>
+                        <button class="operator" onclick="handleInput('*')">*</button>
+                        <button class="function" onclick="handleInput('π')">π</button>
+
+                        <button onclick="handleInput('1')">1</button>
+                        <button onclick="handleInput('2')">2</button>
+                        <button onclick="handleInput('3')">3</button>
+                        <button class="operator" onclick="handleInput('-')">−</button>
+                        <button class="operator" onclick="handleInput('=')" class="equals">=</button>
+
+                        <button onclick="handleInput('0')" style="grid-column: span 2;">0</button>
+                        <button onclick="handleInput('.')">.</button>
+                        <button class="operator" onclick="handleInput('+')">+</button>
+                    </div>
+                </div>
+                <div class="history" id="history">История</div>
+                
+                <!-- Календарь с задачами -->
+                <div class="calendar" id="calendar"></div>
+                <div class="small-clock" id="smallClock">00:00:00</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для добавления задачи -->
+    <div id="taskModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+        <div style="background:white; margin:100px auto; padding:20px; width:300px; border-radius:10px;">
+            <h3>Добавить задачу на <span id="modalDate"></span></h3>
+            <div style="margin-bottom:10px;">
+                <label><input type="radio" name="taskType" value="important" checked> Важная</label>
+                <label><input type="radio" name="taskType" value="daily"> Повседневная</label>
+            </div>
+            <textarea id="taskInput" style="width:100%; padding:8px; margin:10px 0; height:80px;" placeholder="Что нужно сделать?"></textarea>
+            <div>
+                <button onclick="addTaskToCalendar()" style="background:#4CAF50; color:white; border:none; padding:6px 12px; border-radius:4px;">Добавить</button>
+                <button onclick="closeModal()" style="background:#ccc; border:none; padding:6px 12px; border-radius:4px; margin-left:10px;">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для просмотра задачи -->
+    <div id="viewTaskModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+        <div style="background:white; margin:100px auto; padding:20px; width:300px; border-radius:10px;">
+            <h3>Задача на <span id="viewModalDate"></span></h3>
+            <div id="viewTaskContent" style="margin:10px 0; padding:10px; background:#f0f0f0; border-radius:4px; min-height:80px;"></div>
+            <div>
+                <button onclick="deleteCurrentTask()" style="background:#f44336; color:white; border:none; padding:6px 12px; border-radius:4px;">Удалить</button>
+                <button onclick="closeViewModal()" style="background:#ccc; border:none; padding:6px 12px; border-radius:4px; margin-left:10px;">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Аудио элементы для звуков -->
+    <audio id="clickSound" preload="auto">
+        <source src="audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAA" type="audio/wav">
+    </audio>
+    <audio id="alarmSound" preload="auto">
+        <source src="audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhY..." type="audio/wav">
+    </audio>
+
+    <script>
+        // === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+        let selectedDate = null;
+        let currentTaskType = 'important';
+
+        // === ЗВУКИ ===
+        const clickSound = document.getElementById('clickSound');
+        const alarmSound = document.getElementById('alarmSound');
+
+        function playClick() {
+            clickSound.currentTime = 0;
+            clickSound.play().catch(e => {});
+        }
+
+        function playAlarm() {
+            alarmSound.currentTime = 0;
+            alarmSound.play().catch(e => {});
+        }
+
+        // === ЦИТАТЫ ===
+        const quotes = [
+            "Не бойся быть другим — именно ты делаешь мир уникальным. — Стив Джобс",
+            "Счастье — это когда тебя понимают, а не когда ты всем нравишься. — Габриэль Гарсиа Маркес",
+            "Важно не то, что ты делаешь, а то, как ты это делаешь. — Антуан де Сент-Экзюпери",
+            "Если хочешь изменить мир — начни с себя. — Махатма Ганди",
+            "Жизнь — это то, что происходит, пока ты строишь планы. — Джон Леннон",
+            "Лучше ошибиться, чем не действовать. — Фрэнсис Бэкон",
+            "Ты — это то, что ты делаешь, а не то, что ты говоришь. — Лев Толстой",
+            "Сила — в спокойствии. В гневе — слабость. — Марк Аврелий",
+            "Лучший способ предсказать будущее — создать его. — Питер Друкер",
+            "Никто не может тебя раздавить, если ты сам не позволишь. — Наполеон Хилл",
+            "Всё, что ты ищешь — уже внутри тебя. — Руми",
+            "Делай сегодня то, что другие не хотят — завтра будешь делать то, что другие не могут. — Джерри Райс",
+            "Самое главное — верить в себя. Остальное приложится. — Альберт Эйнштейн",
+            "Не жди идеального момента — создай его сам. — Дейл Карнеги",
+            "Ты не можешь изменить прошлое, но можешь создать будущее. — Эдвард Гриффин"
+        ];
+
+        function loadRandomQuote() {
+            const idx = Math.floor(Math.random() * quotes.length);
+            document.getElementById('quote').textContent = quotes[idx];
+        }
+        loadRandomQuote();
+
+        // === ЧАСЫ ===
+        const smallClock = document.getElementById('smallClock');
+        function updateSmallClock() {
+            const now = new Date();
+            smallClock.textContent = now.toLocaleTimeString('ru-RU', { hour12: false });
+        }
+        setInterval(updateSmallClock, 1000);
+        updateSmallClock();
+
+        // === ТЕМЫ ===
+        const themes = [
+            {
+                name: "Светлая",
+                css: `
+                    body { background-color: #f5f5f5; color: #222; }
+                    .panel { background-color: white; color: #222; }
+                    .search-box { background: white; color: #222; border: 1px solid #ccc; }
+                    .quick-link { background-color: #e8f5e9; color: #2e7d32; }
+                    .quick-link:hover { background-color: #c8e6c9; }
+                    .calculator { background-color: #222; }
+                    .display { background-color: #333; color: white; }
+                    .memory-indicator { color: #ff9500; }
+                    .history { background-color: #eee; color: #222; }
+                    button { background-color: #4d4d4d; color: white; }
+                    .operator { background-color: #ff9500; }
+                    .function { background-color: #7a7a7a; }
+                    .clear, .memory { background-color: #a6a6a6; color: black; }
+                    .notepad { background-color: #fffde7; color: #222; }
+                    .notepad-btn { background-color: #4CAF50; color: white; }
+                    .notepad-btn.clear { background-color: #f44336; }
+                    .notepad-btn.save { background-color: #2196F3; }
+                    .calendar-header { color: #333; }
+                    .calendar-day { background: #f9f9f9; color: #333; }
+                    .calendar-day.today { background: #e3f2fd; }
+                    .task-item { color: #2e7d32; }
+                    .small-clock { background-color: #ddd; color: #333; }
+                    .theme-toggle { background: rgba(0,0,0,0.1); color: #333; }
+                    .workspace-title { color: #333; }
+                    .app-title { color: #ddd; }
+                    .quote-box { color: #222; }
+                    .timer-btn { color: white; }
+                    .timer-display { background-color: #f0f0f0; color: #222; }
+                    .contact-info a { color: #2e7d32; text-decoration: none; }
+                `
+            },
+            {
+                name: "Тёмная",
+                css: `
+                    body { background-color: #121212; color: #eee; }
+                    .panel { background-color: #1e1e1e; color: #eee; }
+                    .search-box { background: #333; color: #eee; border: 1px solid #555; }
+                    .quick-link { background-color: #2c3e50; color: #ecf0f1; }
+                    .quick-link:hover { background-color: #34495e; }
+                    .calculator { background-color: #222; }
+                    .display { background-color: #333; color: white; }
+                    .memory-indicator { color: #ff9500; }
+                    .history { background-color: #2a2a2a; color: #eee; }
+                    button { background-color: #4d4d4d; color: white; }
+                    .operator { background-color: #ff9500; }
+                    .function { background-color: #7a7a7a; }
+                    .clear, .memory { background-color: #a6a6a6; color: black; }
+                    .notepad { background-color: #2d2d2d; color: #eee; }
+                    .notepad-btn { background-color: #4CAF50; color: white; }
+                    .notepad-btn.clear { background-color: #f44336; }
+                    .notepad-btn.save { background-color: #2196F3; }
+                    .calendar-header { color: #eee; }
+                    .calendar-day { background: #2a2a2a; color: #eee; }
+                    .calendar-day.today { background: #3a3a3a; }
+                    .task-item { color: #4CAF50; }
+                    .small-clock { background-color: #333; color: #eee; }
+                    .theme-toggle { background: rgba(255,255,255,0.1); color: white; }
+                    .workspace-title { color: white; }
+                    .app-title { color: #ddd; }
+                    .quote-box { color: #eee; }
+                    .timer-btn { color: white; }
+                    .timer-display { background-color: #333; color: #eee; }
+                    .contact-info a { color: #4CAF50; text-decoration: none; }
+                `
+            },
+            {
+                name: "Тёплая",
+                css: `
+                    body { background-color: #fdf6e3; color: #5c4b3e; }
+                    .panel { background-color: #fefcf7; color: #5c4b3e; }
+                    .search-box { background: white; color: #5c4b3e; border: 1px solid #d4c8b0; }
+                    .quick-link { background-color: #e6d9c5; color: #7a5f45; }
+                    .quick-link:hover { background-color: #d9cbb5; }
+                    .calculator { background-color: #222; }
+                    .display { background-color: #333; color: white; }
+                    .memory-indicator { color: #ff9500; }
+                    .history { background-color: #f0e6d2; color: #5c4b3e; }
+                    button { background-color: #4d4d4d; color: white; }
+                    .operator { background-color: #ff9500; }
+                    .function { background-color: #7a7a7a; }
+                    .clear, .memory { background-color: #a6a6a6; color: black; }
+                    .notepad { background-color: #fcf8ee; color: #5c4b3e; }
+                    .notepad-btn { background-color: #8B7355; color: white; }
+                    .notepad-btn.clear { background-color: #a52a2a; }
+                    .notepad-btn.save { background-color: #5d4037; }
+                    .calendar-header { color: #5c4b3e; }
+                    .calendar-day { background: #f5e9d4; color: #5c4b3e; }
+                    .calendar-day.today { background: #e8d8c0; }
+                    .task-item { color: #7a5f45; }
+                    .small-clock { background-color: #f5e9d4; color: #5c4b3e; }
+                    .theme-toggle { background: rgba(141, 115, 85, 0.2); color: #5c4b3e; }
+                    .workspace-title { color: #5c4b3e; }
+                    .app-title { color: #ddd; }
+                    .quote-box { color: #5c4b3e; }
+                    .timer-btn { color: white; }
+                    .timer-display { background-color: #f5e9d4; color: #5c4b3e; }
+                    .contact-info a { color: #7a5f45; text-decoration: none; }
+                `
+            },
+            {
+                name: "Холодная",
+                css: `
+                    body { background-color: #eef7fa; color: #2c4f64; }
+                    .panel { background-color: #f8fdff; color: #2c4f64; }
+                    .search-box { background: white; color: #2c4f64; border: 1px solid #b0d4e4; }
+                    .quick-link { background-color: #d0e8f2; color: #2c4f64; }
+                    .quick-link:hover { background-color: #b0d4e4; }
+                    .calculator { background-color: #222; }
+                    .display { background-color: #333; color: white; }
+                    .memory-indicator { color: #ff9500; }
+                    .history { background-color: #d9edf7; color: #2c4f64; }
+                    button { background-color: #4d4d4d; color: white; }
+                    .operator { background-color: #ff9500; }
+                    .function { background-color: #7a7a7a; }
+                    .clear, .memory { background-color: #a6a6a6; color: black; }
+                    .notepad { background-color: #f0f8fc; color: #2c4f64; }
+                    .notepad-btn { background-color: #3a7ca5; color: white; }
+                    .notepad-btn.clear { background-color: #d9534f; }
+                    .notepad-btn.save { background-color: #2c4f64; }
+                    .calendar-header { color: #2c4f64; }
+                    .calendar-day { background: #d0e8f2; color: #2c4f64; }
+                    .calendar-day.today { background: #b0d4e4; }
+                    .task-item { color: #2c4f64; }
+                    .small-clock { background-color: #d0e8f2; color: #2c4f64; }
+                    .theme-toggle { background: rgba(58, 124, 165, 0.2); color: #2c4f64; }
+                    .workspace-title { color: #2c4f64; }
+                    .app-title { color: #ddd; }
+                    .quote-box { color: #2c4f64; }
+                    .timer-btn { color: white; }
+                    .timer-display { background-color: #d0e8f2; color: #2c4f64; }
+                    .contact-info a { color: #2c4f64; text-decoration: none; }
+                `
+            }
+        ];
+
+        let currentThemeIndex = 0;
+        const themeStyle = document.getElementById('theme-style');
+
+        function applyTheme(index) {
+            themeStyle.textContent = themes[index].css;
+            localStorage.setItem('workspace_theme', index);
+        }
+
+        function toggleTheme() {
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            applyTheme(currentThemeIndex);
+        }
+
+        const savedTheme = localStorage.getItem('workspace_theme');
+        if (savedTheme !== null) {
+            currentThemeIndex = parseInt(savedTheme);
+        }
+        applyTheme(currentThemeIndex);
+
+        // === КАЛЬКУЛЯТОР ===
+        let memory = 0;
+        const display = document.getElementById('display');
+        const history = document.getElementById('history');
+        const memoryIndicator = document.getElementById('memoryIndicator');
+
+        function updateMemoryIndicator() {
+            memoryIndicator.textContent = memory !== 0 ? 'M' : '';
+        }
+
+        function addToHistory(entry) {
+            const now = new Date().toLocaleTimeString();
+            history.innerHTML = `<div>[${now}] ${entry}</div>` + history.innerHTML;
+        }
+
+        function copyResult() {
+            if (display.value && display.value !== 'Ошибка') {
+                navigator.clipboard.writeText(display.value).then(() => {
+                    display.placeholder = 'скопировано!';
+                    setTimeout(() => display.placeholder = '0', 1000);
+                });
+            }
+        }
+
+        function handleInput(action) {
+            playClick();
+            switch(action) {
+                case 'C': display.value = ''; break;
+                case '⌫': display.value = display.value.slice(0, -1); break;
+                case '=': calculate(); break;
+                case '±': toggleSign(); break;
+                case '%': percent(); break;
+                case '√': sqrt(); break;
+                case 'x²': square(); break;
+                case '1/x': inverse(); break;
+                case 'π': appendToDisplay(Math.PI); break;
+                case 'MC': memory = 0; updateMemoryIndicator(); break;
+                case 'MR': display.value = memory; break;
+                case 'M+': if (!isNaN(display.value)) memory += parseFloat(display.value); updateMemoryIndicator(); break;
+                case 'M−': if (!isNaN(display.value)) memory -= parseFloat(display.value); updateMemoryIndicator(); break;
+                default:
+                    if (display.value === 'Ошибка') display.value = '';
+                    display.value += action;
+            }
+        }
+
+        function appendToDisplay(value) { display.value += value; }
+        function calculate() {
+            try {
+                if (display.value === '') return;
+                let expr = display.value
+                    .replace(/(\d+(\.\d+)?)%/g, '($1/100)')
+                    .replace(/([+\-*/])(\d+(\.\d+)?)(?=%)/g, '$1$2*$2/100');
+                let result = eval(expr);
+                if (typeof result === 'number' && !isNaN(result)) {
+                    result = Math.round(result * 100000000) / 100000000;
+                    addToHistory(display.value + ' = ' + result);
+                    display.value = result;
+                } else {
+                    display.value = 'Ошибка';
+                }
+            } catch (e) {
+                display.value = 'Ошибка';
+            }
+        }
+        function toggleSign() {
+            if (display.value && display.value !== 'Ошибка') {
+                display.value = display.value.startsWith('-') ? display.value.slice(1) : '-' + display.value;
+            }
+        }
+        function sqrt() {
+            const num = parseFloat(display.value);
+            if (!isNaN(num) && num >= 0) {
+                const result = Math.sqrt(num);
+                addToHistory(`√(${num}) = ${result}`);
+                display.value = result;
+            } else {
+                display.value = 'Ошибка';
+            }
+        }
+        function square() {
+            const num = parseFloat(display.value);
+            if (!isNaN(num)) {
+                const result = num * num;
+                addToHistory(`(${num})² = ${result}`);
+                display.value = result;
+            } else {
+                display.value = 'Ошибка';
+            }
+        }
+        function inverse() {
+            const num = parseFloat(display.value);
+            if (!isNaN(num) && num !== 0) {
+                const result = 1 / num;
+                addToHistory(`1/(${num}) = ${result}`);
+                display.value = result;
+            } else {
+                display.value = 'Ошибка';
+            }
+        }
+        function percent() {
+            if (display.value && !isNaN(display.value)) {
+                const num = parseFloat(display.value);
+                const result = num / 100;
+                addToHistory(`${num}% = ${result}`);
+                display.value = result;
+            }
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') handleInput('=');
+            else if (event.key === 'Escape') handleInput('C');
+            else if (event.key === 'Backspace') handleInput('⌫');
+            else if (['0','1','2','3','4','5','6','7','8','9','+','-','*','/','.'].includes(event.key)) {
+                handleInput(event.key);
+            }
+            else if (event.key === '%') handleInput('%');
+        });
+
+        updateMemoryIndicator();
+
+        // === БЛОКНОТ ===
+        const notepad = document.getElementById('notepad');
+        const notesHistoryList = document.getElementById('notesHistoryList');
+        const NOTEPAD_KEY = 'user_notepad_content';
+        const NOTES_HISTORY_KEY = 'notes_history';
+
+        function loadNotepad() {
+            const saved = localStorage.getItem(NOTEPAD_KEY);
+            if (saved) notepad.value = saved;
+        }
+
+        notepad.addEventListener('input', () => {
+            localStorage.setItem(NOTEPAD_KEY, notepad.value);
+        });
+
+        function copyNotepad() {
+            notepad.select();
+            document.execCommand('copy');
+            notepad.setSelectionRange(0, 0);
+        }
+
+        function clearNotepad() {
+            if (confirm('Очистить заметки?')) {
+                notepad.value = '';
+                localStorage.removeItem(NOTEPAD_KEY);
+            }
+        }
+
+        function saveNotepad() {
+            const content = notepad.value || ' ';
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'заметки.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        window.addEventListener('beforeunload', () => {
+            const current = notepad.value.trim();
+            if (!current) return;
+            let history = JSON.parse(localStorage.getItem(NOTES_HISTORY_KEY) || '[]');
+            history = history.filter(note => note !== current);
+            history.unshift(current);
+            history = history.slice(0, 3);
+            localStorage.setItem(NOTES_HISTORY_KEY, JSON.stringify(history));
+        });
+
+        function renderNotesHistory() {
+            const history = JSON.parse(localStorage.getItem(NOTES_HISTORY_KEY) || '[]');
+            notesHistoryList.innerHTML = '';
+            history.forEach((note, index) => {
+                const div = document.createElement('div');
+                div.className = 'note-item';
+                div.title = note;
+                div.textContent = note.substring(0, 40) + (note.length > 40 ? '...' : '');
+                div.onclick = () => {
+                    notepad.value = note;
+                };
+                notesHistoryList.appendChild(div);
+            });
+        }
+
+        loadNotepad();
+        renderNotesHistory();
+
+        // === КАЛЕНДАРЬ С ЗАДАЧАМИ ===
+        const CALENDAR_TASKS_KEY = 'calendar_tasks';
+
+        function getTasksForDate(dateStr) {
+            const tasks = JSON.parse(localStorage.getItem(CALENDAR_TASKS_KEY) || '{}');
+            return tasks[dateStr] || [];
+        }
+
+        function saveTasksForDate(dateStr, tasks) {
+            const allTasks = JSON.parse(localStorage.getItem(CALENDAR_TASKS_KEY) || '{}');
+            allTasks[dateStr] = tasks;
+            localStorage.setItem(CALENDAR_TASKS_KEY, JSON.stringify(allTasks));
+        }
+
+        function addTaskToCalendar() {
+            const taskText = document.getElementById('taskInput').value.trim();
+            if (!taskText || !selectedDate) return;
+
+            const taskType = document.querySelector('input[name="taskType"]:checked').value;
+
+            const tasks = getTasksForDate(selectedDate);
+            tasks.push({ text: taskText, type: taskType });
+            saveTasksForDate(selectedDate, tasks);
+
+            closeModal();
+            renderCalendarWithTasks();
+        }
+
+        function deleteTask(dateStr, index) {
+            const tasks = getTasksForDate(dateStr);
+            tasks.splice(index, 1);
+            saveTasksForDate(dateStr, tasks);
+            renderCalendarWithTasks();
+        }
+
+        function openTaskModal(dateStr) {
+            selectedDate = dateStr;
+            document.getElementById('modalDate').textContent = dateStr;
+            document.getElementById('taskInput').value = '';
+            document.getElementById('taskModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('taskModal').style.display = 'none';
+            selectedDate = null;
+        }
+
+        function viewTask(dateStr, index) {
+            const tasks = getTasksForDate(dateStr);
+            const task = tasks[index];
+            document.getElementById('viewModalDate').textContent = dateStr;
+            document.getElementById('viewTaskContent').textContent = task.text;
+            document.getElementById('viewTaskModal').dataset.date = dateStr;
+            document.getElementById('viewTaskModal').dataset.index = index;
+            document.getElementById('viewTaskModal').style.display = 'block';
+        }
+
+        function closeViewModal() {
+            document.getElementById('viewTaskModal').style.display = 'none';
+        }
+
+        function deleteCurrentTask() {
+            const dateStr = document.getElementById('viewTaskModal').dataset.date;
+            const index = parseInt(document.getElementById('viewTaskModal').dataset.index);
+            deleteTask(dateStr, index);
+            closeViewModal();
+        }
+
+        function renderCalendarWithTasks() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            const today = now.getDate();
+
+            const firstDay = new Date(year, month, 1);
+            const startDayIndex = (firstDay.getDay() + 6) % 7;
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+
+            let calendarHTML = `
+                <div class="calendar-header">${now.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })}</div>
+                <div class="calendar-weekdays">${weekdays.map(d => `<div>${d}</div>`).join('')}</div>
+                <div class="calendar-days">`;
+
+            for (let i = 0; i < startDayIndex; i++) {
+                calendarHTML += '<div class="calendar-day empty"></div>';
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const isToday = (day === today);
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const tasks = getTasksForDate(dateStr);
+
+                let className = 'calendar-day';
+                if (tasks.length > 0) {
+                    const hasImportant = tasks.some(task => task.type === 'important');
+                    const hasDaily = tasks.some(task => task.type === 'daily');
+                    if (hasImportant && hasDaily) {
+                        className += ' blink-red';
+                    } else if (hasImportant) {
+                        className += ' blink-red';
+                    } else if (hasDaily) {
+                        className += ' blink-blue';
+                    }
+                }
+
+                calendarHTML += `
+                    <div class="${className}" onclick="openTaskModal('${dateStr}')">
+                        ${day}
+                    </div>`;
+            }
+
+            calendarHTML += '</div>';
+            document.getElementById('calendar').innerHTML = calendarHTML;
+        }
+
+        renderCalendarWithTasks();
+
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('calendar-day') && !e.target.classList.contains('empty')) {
+                const dateStr = e.target.closest('.calendar-day').onclick.toString().match(/'([^']+)'/)[1];
+                const tasks = getTasksForDate(dateStr);
+                if (tasks.length > 0) {
+                    viewTask(dateStr, 0);
+                }
+            }
+        });
+      // === ТАЙМЕР ===
+        let timerInterval = null;
+        let totalSeconds = 0;
+
+        function startTimer() {
+            if (timerInterval) return; // уже запущен
+
+            const input = document.getElementById('timerInput');
+            const minutes = parseInt(input.value) || 5;
+            if (minutes <= 0) {
+                alert('Введите число больше 0');
+                return;
+            }
+
+            totalSeconds = minutes * 60;
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                if (totalSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    alert('⏰ Время вышло!');
+                    return;
+                }
+                totalSeconds--;
+                updateTimerDisplay();
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function resetTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            totalSeconds = 0;
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+            const secs = (totalSeconds % 60).toString().padStart(2, '0');
+            document.getElementById('timerDisplay').textContent = `${mins}:${secs}`;
+        }
+
+        // === Заглушка для короткого звука (base64 tiny WAV) ===
+        // Это минимальный WAV-файл (0.1 сек, тихий щелчок)
+        const clickBase64 = "UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAA";
+        const alarmBase64 = "UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhY..."; // упрощён
+
+        // Обновляем источники
+        document.getElementById('clickSound').src = "audio/wav;base64," + clickBase64;
+        document.getElementById('alarmSound').src = "audio/wav;base64," + alarmBase64;
+    </script>
+</body>
+</html>
