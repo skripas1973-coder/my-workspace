@@ -21,7 +21,6 @@
             position: relative;
         }
 
-        /* Название */
         .app-title-container {
             position: absolute;
             top: 15px;
@@ -43,15 +42,7 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
             font-family: 'Caveat', 'Dancing Script', 'Brush Script MT', cursive;
         }
-        .leaf {
-            width: 16px;
-            height: 16px;
-            background-image: url('image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.5 2 5.5 4 4 7c-1.5 3 0 7 2 9 2 2 5 3 8 3 3 0 6-1 8-3 2-2 3.5-6 2-9-1.5-3-4.5-5-8-5zm0 2c2.5 0 4.5 1.5 5.5 4-1 2.5-3 4-5.5 4S7.5 10.5 6.5 8C7.5 5.5 9.5 4 12 4z" fill="%234CAF50"/></svg>');
-            background-size: contain;
-            background-repeat: no-repeat;
-        }
 
-        /* Заголовок "Рабочий стол" */
         .workspace-title {
             position: absolute;
             top: 15px;
@@ -65,7 +56,6 @@
             z-index: 10;
         }
 
-        /* Кнопка темы */
         .theme-toggle {
             position: absolute;
             top: 15px;
@@ -87,9 +77,9 @@
             width: 100%;
             max-width: 1200px;
             margin-top: 10px;
+            align-items: stretch; /* ← Выравнивание колонок по высоте */
         }
 
-        /* Ширина колонок */
         .left-panel, .right-panel {
             flex: 0 0 220px;
         }
@@ -355,15 +345,13 @@
     <!-- Название -->
     <div class="app-title-container">
         <div class="app-title">скрипа. рядом</div>
-        <div class="leaf"></div>
-        <div class="leaf"></div>
     </div>
 
     <!-- Надпись "Рабочий стол" -->
     <div class="workspace-title">Рабочий стол</div>
 
     <!-- Кнопка темы -->
-    <button class="theme-toggle" onclick="toggleTheme()">🌓 Тема</button>
+    <button class="theme-toggle" onclick="toggleTheme()">&#x1F313; Тема</button>
 
     <!-- Три колонки -->
     <div class="main-content">
@@ -378,10 +366,10 @@
                 <div class="quick-links">
                     <h3 style="margin: 15px 0 10px;">Быстрые ссылки</h3>
                     <div class="links-grid">
-                        <a href="https://www.youtube.com" target="_blank" class="quick-link">📺 YouTube</a>
-                        <a href="https://web.telegram.org" target="_blank" class="quick-link">💬 Telegram</a>
-                        <a href="https://chat.qwen.ai" target="_blank" class="quick-link">🧠 Qwen</a>
-                        <a href="https://github.com/skripas1973-coder/my-workspace" target="_blank" class="quick-link">📁 GitHub</a>
+                        <a href="https://www.youtube.com" target="_blank" class="quick-link">&#x1F4FA; YouTube</a>
+                        <a href="https://web.telegram.org" target="_blank" class="quick-link">&#x1F5E8; Telegram</a>
+                        <a href="https://chat.qwen.ai" target="_blank" class="quick-link">&#x1F9E0; Qwen</a>
+                        <a href="https://github.com/skripas1973-coder/my-workspace" target="_blank" class="quick-link">&#x1F4C1; GitHub</a>
                     </div>
                 </div>
 
@@ -425,7 +413,7 @@
 
                 <!-- Контакт -->
                 <div class="contact-info">
-                    💬 Хотите предложить улучшение?<br>
+                    Хотите предложить улучшение?<br>
                     Напишите автору: <a href="mailto:skripas@inbox.ru">skripas@inbox.ru</a>
                 </div>
             </div>
@@ -510,32 +498,9 @@
         </div>
     </div>
 
-    <!-- Аудио элементы для звуков -->
-    <audio id="clickSound" preload="auto">
-        <source src="audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAA" type="audio/wav">
-    </audio>
-    <audio id="alarmSound" preload="auto">
-        <source src="audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhY..." type="audio/wav">
-    </audio>
-
     <script>
         // === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
         let selectedDate = null;
-        let currentTaskType = 'important';
-
-        // === ЗВУКИ ===
-        const clickSound = document.getElementById('clickSound');
-        const alarmSound = document.getElementById('alarmSound');
-
-        function playClick() {
-            clickSound.currentTime = 0;
-            clickSound.play().catch(e => {});
-        }
-
-        function playAlarm() {
-            alarmSound.currentTime = 0;
-            alarmSound.play().catch(e => {});
-        }
 
         // === ЦИТАТЫ ===
         const quotes = [
@@ -708,9 +673,284 @@
                     .timer-display { background-color: #d0e8f2; color: #2c4f64; }
                     .contact-info a { color: #2c4f64; text-decoration: none; }
                 `
+            },
+            {
+                name: "Военная",
+                css: `
+                    body {
+                        background: linear-gradient(45deg, #4a5c3a 25%, #3a4c2a 25%, #3a4c2a 50%, #4a5c3a 50%, #4a5c3a 75%, #3a4c2a 75%, #3a4c2a 100%);
+                        background-size: 20px 20px;
+                        color: #ddd;
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    }
+                    .panel {
+                        background-color: rgba(58, 76, 42, 0.8);
+                        color: #ddd;
+                        border: 1px solid #3a4c2a;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+                    }
+                    .search-box {
+                        background: rgba(74, 92, 58, 0.8);
+                        color: #ddd;
+                        border: 1px solid #3a4c2a;
+                    }
+                    .quick-link {
+                        background-color: rgba(74, 92, 58, 0.6);
+                        color: #fff;
+                        border: 1px solid #3a4c2a;
+                    }
+                    .quick-link:hover {
+                        background-color: rgba(74, 92, 58, 0.8);
+                    }
+                    .calculator {
+                        background-color: rgba(58, 76, 42, 0.8);
+                        border: 1px solid #3a4c2a;
+                    }
+                    .display {
+                        background-color: rgba(74, 92, 58, 0.8);
+                        color: #fff;
+                        border: 1px solid #3a4c2a;
+                    }
+                    .memory-indicator {
+                        color: #ffcc00;
+                    }
+                    .history {
+                        background-color: rgba(74, 92, 58, 0.6);
+                        color: #ddd;
+                        border: 1px solid #3a4c2a;
+                    }
+                    button {
+                        background-color: rgba(74, 92, 58, 0.6);
+                        color: #fff;
+                        border: 1px solid #3a4c2a;
+                    }
+                    .operator {
+                        background-color: #ffcc00;
+                        color: #333;
+                    }
+                    .function {
+                        background-color: rgba(74, 92, 58, 0.8);
+                        color: #fff;
+                    }
+                    .clear, .memory {
+                        background-color: rgba(74, 92, 58, 0.8);
+                        color: #fff;
+                    }
+                    .notepad {
+                        background-color: rgba(58, 76, 42, 0.8);
+                        color: #ddd;
+                        border: 1px solid #3a4c2a;
+                    }
+                    .notepad-btn {
+                        background-color: #ffcc00;
+                        color: #333;
+                        border: 1px solid #3a4c2a;
+                    }
+                    .notepad-btn.clear {
+                        background-color: #ff6600;
+                    }
+                    .notepad-btn.save {
+                        background-color: #3399ff;
+                    }
+                    .calendar-header {
+                        color: #ddd;
+                    }
+                    .calendar-day {
+                        background: rgba(74, 92, 58, 0.6);
+                        color: #ddd;
+                        border: 1px solid #3a4c2a;
+                    }
+                    .calendar-day.today {
+                        background: rgba(74, 92, 58, 0.8);
+                        color: #fff;
+                    }
+                    .task-item {
+                        color: #ffcc00;
+                    }
+                    .small-clock {
+                        background-color: rgba(74, 92, 58, 0.6);
+                        color: #ddd;
+                        border: 1px solid #3a4c2a;
+                    }
+                    .theme-toggle {
+                        background: rgba(255, 204, 0, 0.2);
+                        color: #fff;
+                        border: 1px solid #ffcc00;
+                    }
+                    .workspace-title {
+                        color: #fff;
+                        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+                    }
+                    .app-title {
+                        color: #fff;
+                        background: rgba(74, 92, 58, 0.8);
+                        border: 1px solid #3a4c2a;
+                    }
+                    .quote-box {
+                        color: #ddd;
+                        background: rgba(74, 92, 58, 0.6);
+                        border: 1px solid #3a4c2a;
+                    }
+                    .timer-btn {
+                        color: #fff;
+                        background: rgba(74, 92, 58, 0.6);
+                        border: 1px solid #3a4c2a;
+                    }
+                    .timer-display {
+                        background-color: rgba(74, 92, 58, 0.6);
+                        color: #ddd;
+                        border: 1px solid #3a4c2a;
+                    }
+                    .contact-info a {
+                        color: #ffcc00;
+                        text-decoration: none;
+                    }
+                    .workspace-title::after {
+                        content: " ★★★";
+                        color: #ffcc00;
+                        font-size: 18px;
+                        vertical-align: middle;
+                    }
+                `
+            },
+            {
+                name: "Карандашный скетч",
+                css: `
+                    body {
+                        background: #fff;
+                        color: #333;
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                        background-image: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.5) 10%, rgba(255,255,255,0.5) 10%), radial-gradient(circle at 90% 80%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.5) 10%, rgba(255,255,255,0.5) 10%);
+                        background-size: 100% 100%;
+                        filter: contrast(0.95) brightness(0.95) saturate(0.95);
+                    }
+                    .panel {
+                        background-color: #fff;
+                        color: #333;
+                        border: 1px solid #ccc;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+                        filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.1));
+                    }
+                    .search-box {
+                        background: #fafafa;
+                        color: #333;
+                        border: 1px solid #ddd;
+                    }
+                    .quick-link {
+                        background-color: transparent;
+                        color: #333;
+                        border: 1px solid #ccc;
+                    }
+                    .quick-link:hover {
+                        background-color: #f5f5f5;
+                    }
+                    .calculator {
+                        background-color: #fff;
+                        border: 1px solid #ddd;
+                    }
+                    .display {
+                        background-color: #fff;
+                        color: #333;
+                        border: 1px solid #ddd;
+                    }
+                    .memory-indicator {
+                        color: #888;
+                    }
+                    .history {
+                        background-color: #fafafa;
+                        color: #333;
+                        border: 1px solid #ddd;
+                    }
+                    button {
+                        background-color: #f0f0f0;
+                        color: #333;
+                        border: 1px solid #ddd;
+                    }
+                    .operator {
+                        background-color: #e0e0e0;
+                    }
+                    .function {
+                        background-color: #f5f5f5;
+                    }
+                    .clear, .memory {
+                        background-color: #eee;
+                    }
+                    .notepad {
+                        background-color: #fff;
+                        color: #333;
+                        border: 1px solid #ddd;
+                    }
+                    .notepad-btn {
+                        background-color: #f0f0f0;
+                        color: #333;
+                        border: 1px solid #ccc;
+                    }
+                    .calendar-header {
+                        color: #333;
+                    }
+                    .calendar-day {
+                        background: #fafafa;
+                        color: #333;
+                        border: 1px solid #eee;
+                    }
+                    .calendar-day.today {
+                        background: #f0f0f0;
+                        color: #333;
+                        border: 1px solid #ccc;
+                    }
+                    .task-item {
+                        color: #333;
+                    }
+                    .small-clock {
+                        background-color: #fafafa;
+                        color: #333;
+                        border: 1px solid #eee;
+                    }
+                    .theme-toggle {
+                        background: #f0f0f0;
+                        color: #333;
+                        border: 1px solid #ccc;
+                    }
+                    .workspace-title {
+                        color: #333;
+                        font-weight: 600;
+                        text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+                    }
+                    .app-title {
+                        color: #333;
+                        background: #333;
+                        border: 1px solid #000;
+                        text-shadow: 1px 1px 1px rgba(255,255,255,0.3);
+                    }
+                    .quote-box {
+                        color: #333;
+                        background: #fafafa;
+                        border: 1px solid #ddd;
+                        text-shadow: 1px 1px 1px rgba(255,255,255,0.5);
+                    }
+                    .timer-btn {
+                        color: #333;
+                        background: #f0f0f0;
+                        border: 1px solid #ccc;
+                    }
+                    .timer-display {
+                        background-color: #fafafa;
+                        color: #333;
+                        border: 1px solid #eee;
+                    }
+                    .contact-info a {
+                        color: #333;
+                        text-decoration: underline;
+                    }
+                    .workspace-title::after {
+                        content: " ✏️";
+                        color: #888;
+                        font-size: 18px;
+                        vertical-align: middle;
+                    }
+                `
             }
         ];
-
         let currentThemeIndex = 0;
         const themeStyle = document.getElementById('theme-style');
 
@@ -755,7 +995,7 @@
         }
 
         function handleInput(action) {
-            playClick();
+            playClick(); // Звук щелчка
             switch(action) {
                 case 'C': display.value = ''; break;
                 case '⌫': display.value = display.value.slice(0, -1); break;
@@ -1047,20 +1287,16 @@
                 }
             }
         });
-      // === ТАЙМЕР ===
+
+        // === ТАЙМЕР ===
         let timerInterval = null;
         let totalSeconds = 0;
 
         function startTimer() {
-            if (timerInterval) return; // уже запущен
+            playClick();
+            if (timerInterval) return;
 
-            const input = document.getElementById('timerInput');
-            const minutes = parseInt(input.value) || 5;
-            if (minutes <= 0) {
-                alert('Введите число больше 0');
-                return;
-            }
-
+            const minutes = parseInt(document.getElementById('timerInput').value) || 5;
             totalSeconds = minutes * 60;
             updateTimerDisplay();
 
@@ -1068,7 +1304,15 @@
                 if (totalSeconds <= 0) {
                     clearInterval(timerInterval);
                     timerInterval = null;
-                    alert('⏰ Время вышло!');
+                    playAlarm();
+                    // Визуальное уведомление вместо alert
+                    const display = document.getElementById('timerDisplay');
+                    display.textContent = '⏰ Время!';
+                    display.style.color = '#f44336';
+                    display.style.fontWeight = 'bold';
+                    setTimeout(() => {
+                        updateTimerDisplay(); // вернёт обычный вид
+                    }, 5000);
                     return;
                 }
                 totalSeconds--;
@@ -1077,6 +1321,7 @@
         }
 
         function pauseTimer() {
+            playClick();
             if (timerInterval) {
                 clearInterval(timerInterval);
                 timerInterval = null;
@@ -1084,6 +1329,7 @@
         }
 
         function resetTimer() {
+            playClick();
             if (timerInterval) {
                 clearInterval(timerInterval);
                 timerInterval = null;
@@ -1096,16 +1342,58 @@
             const mins = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
             const secs = (totalSeconds % 60).toString().padStart(2, '0');
             document.getElementById('timerDisplay').textContent = `${mins}:${secs}`;
+            document.getElementById('timerDisplay').style.color = '';
+            document.getElementById('timerDisplay').style.fontWeight = '';
         }
 
-        // === Заглушка для короткого звука (base64 tiny WAV) ===
-        // Это минимальный WAV-файл (0.1 сек, тихий щелчок)
-        const clickBase64 = "UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAA";
-        const alarmBase64 = "UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhY..."; // упрощён
+        // === ЗВУКИ (Web Audio API) ===
+        let audioContext = null;
 
-        // Обновляем источники
-        document.getElementById('clickSound').src = "audio/wav;base64," + clickBase64;
-        document.getElementById('alarmSound').src = "audio/wav;base64," + alarmBase64;
+        function playClick() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.type = 'sine';
+            oscillator.frequency.value = 800;
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.1);
+        }
+
+        function playAlarm() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+
+            let count = 0;
+            const maxCount = 30; // количество "пиков"
+            const interval = 400; // пауза между пиками (мс)
+
+            function beep() {
+                if (count >= maxCount) return;
+
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.2);
+
+                count++;
+                setTimeout(beep, interval);
+            }
+
+            beep(); // запуск первого пика
+        }
     </script>
 </body>
 </html>
