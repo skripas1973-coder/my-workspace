@@ -1,0 +1,127 @@
+﻿:root {
+    --paper: #fcfaf8;
+    --text: #333;
+    --accent: #6B4423;
+    --border: #e8e4db;
+    --card-bg: #ffffff;
+}
+
+[data-theme="dark"] {
+    --paper: #1a1a1a;
+    --text: #e0e0e0;
+    --accent: #d4af37;
+    --border: #333;
+    --card-bg: #252525;
+}
+
+body {
+    background-color: var(--paper);
+    color: var(--text);
+    font-family: 'Cormorant Garamond', serif;
+    transition: 0.4s;
+    margin: 0;
+    padding: 20px;
+}
+
+.container { max-width: 1100px; margin: 0 auto; }
+
+/* Шапка: Фото слева, Название в центре */
+.main-header {
+    display: flex;
+    align-items: center;
+    padding: 40px 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 30px;
+}
+
+.author-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 200px;
+    text-align: center;
+}
+
+.profile-img {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--accent);
+    margin-bottom: 8px;
+}
+
+.author-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.2;
+    font-family: 'Playfair Display', serif;
+}
+
+.header-center {
+    flex-grow: 1;
+    text-align: center;
+    margin-right: 200px; /* Чтобы сбалансировать левый блок */
+}
+
+.logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    color: var(--accent);
+    margin: 0;
+    line-height: 1;
+}
+
+.logo-subtitle {
+    font-style: italic;
+    font-size: 1.3rem;
+    margin-top: 10px;
+    opacity: 0.8;
+}
+
+/* Навигация */
+nav ul { display: flex; justify-content: center; flex-wrap: wrap; list-style: none; gap: 10px; padding: 0; margin-bottom: 40px; }
+.nav-link { 
+    text-decoration: none; color: var(--text); padding: 8px 16px; 
+    border-radius: 20px; cursor: pointer; border: 1px solid var(--border);
+    font-size: 1.1rem; transition: 0.3s;
+}
+.nav-link.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+/* Сетка стихов */
+.poems-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+.poem-card {
+    background: var(--card-bg); padding: 30px; border-radius: 12px;
+    border: 1px solid var(--border); cursor: pointer; transition: 0.3s;
+}
+.poem-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+.poem-card h3 { margin: 0 0 15px 0; color: var(--accent); font-family: 'Playfair Display', serif; font-size: 1.6rem; }
+
+/* Кнопки в углу */
+.top-bar { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; }
+.auth-btn { background: var(--accent); color: white; border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; }
+.theme-btn { background: var(--accent); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
+
+/* Модальные окна */
+.modal {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center;
+}
+.modal-content {
+    background: var(--paper); padding: 50px; border-radius: 15px;
+    max-width: 700px; width: 90%; max-height: 85vh; overflow-y: auto; position: relative;
+}
+.close-modal { position: absolute; top: 15px; right: 20px; font-size: 35px; border: none; background: none; color: var(--text); cursor: pointer; }
+.full-poem-text { white-space: pre-line; font-size: 1.4rem; font-style: italic; text-align: center; line-height: 1.6; }
+
+/* Форма входа */
+.auth-form { text-align: center; display: flex; flex-direction: column; gap: 15px; max-width: 400px; }
+.auth-form input { padding: 12px; border-radius: 8px; border: 1px solid var(--border); font-size: 1rem; }
+.submit-btn { background: var(--accent); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+
+footer { text-align: center; padding: 50px 0; opacity: 0.6; font-size: 0.9rem; }
+
+@media (max-width: 850px) {
+    .main-header { flex-direction: column; text-align: center; }
+    .header-center { margin-right: 0; margin-top: 25px; }
+}
