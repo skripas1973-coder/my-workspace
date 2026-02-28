@@ -1,14 +1,15 @@
 ﻿:root {
     --paper: #fcfaf8;
-    --text: #333;
+    --text: #000000;
     --accent: #6B4423;
     --border: #e8e4db;
     --card-bg: #ffffff;
+    --gold: #d4af37; /* Добавил переменную золотого цвета для новинки */
 }
 
 [data-theme="dark"] {
     --paper: #1a1a1a;
-    --text: #e0e0e0;
+    --text: #f0f0f0;
     --accent: #d4af37;
     --border: #333;
     --card-bg: #252525;
@@ -17,15 +18,28 @@
 body {
     background-color: var(--paper);
     color: var(--text);
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-weight: 400;
+    line-height: 1.5;
     transition: 0.4s;
     margin: 0;
     padding: 20px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
-.container { max-width: 1100px; margin: 0 auto; }
+.container { max-width: 1100px; margin: 0 auto; position: relative; }
 
-/* Шапка: Фото слева, Название в центре */
+/* НОВАЯ СЕТКА: Список слева, Новинка справа */
+.main-content-layout {
+    display: flex;
+    justify-content:间隙;
+    gap: 40px;
+    align-items: flex-start;
+    margin-top: 30px;
+}
+
 .main-header {
     display: flex;
     align-items: center;
@@ -52,7 +66,7 @@ body {
 }
 
 .author-name {
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 700;
     line-height: 1.2;
     font-family: 'Playfair Display', serif;
@@ -61,7 +75,7 @@ body {
 .header-center {
     flex-grow: 1;
     text-align: center;
-    margin-right: 200px; /* Чтобы сбалансировать левый блок */
+    margin-right: 200px;
 }
 
 .logo {
@@ -76,52 +90,188 @@ body {
     font-style: italic;
     font-size: 1.3rem;
     margin-top: 10px;
-    opacity: 0.8;
+    opacity: 0.9;
 }
 
-/* Навигация */
 nav ul { display: flex; justify-content: center; flex-wrap: wrap; list-style: none; gap: 10px; padding: 0; margin-bottom: 40px; }
-.nav-link { 
-    text-decoration: none; color: var(--text); padding: 8px 16px; 
-    border-radius: 20px; cursor: pointer; border: 1px solid var(--border);
-    font-size: 1.1rem; transition: 0.3s;
+
+.nav-link {
+    text-decoration: none;
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    font-size: 0.9rem;
+    transition: 0.3s;
+    font-weight: 500;
 }
+
 .nav-link.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-/* Сетка стихов */
-.poems-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
-.poem-card {
-    background: var(--card-bg); padding: 30px; border-radius: 12px;
-    border: 1px solid var(--border); cursor: pointer; transition: 0.3s;
+/* Левая колонка со списком */
+.poems-grid { 
+    flex: 1; /* Занимает доступное пространство */
+    display: flex; 
+    flex-direction: column; 
+    gap: 0px; 
+    max-width: 450px;
 }
-.poem-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-.poem-card h3 { margin: 0 0 15px 0; color: var(--accent); font-family: 'Playfair Display', serif; font-size: 1.6rem; }
 
-/* Кнопки в углу */
-.top-bar { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; }
-.auth-btn { background: var(--accent); color: white; border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; }
-.theme-btn { background: var(--accent); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
+.poem-card {
+    background: none;
+    padding: 8px 0;
+    border: none;
+    border-bottom: 1px dotted var(--border);
+    border-radius: 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: baseline;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.poem-card:hover {
+    transform: translateX(5px);
+    border-bottom-color: var(--accent);
+}
+
+.poem-card h3 { 
+    margin: 0; 
+    font-size: 1.0rem; 
+    color: var(--text);
+    font-family: 'Playfair Display', serif;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.poem-card small {
+    margin-left: 15px;
+    font-size: 0.85rem;
+    opacity: 0.5;
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+.poem-card p { display: none; }
+
+/* ПРАВАЯ КОЛОНКА: Блок НОВИНКА */
+.new-poem-sidebar {
+    flex: 0 0 320px; /* Фиксированная ширина */
+    position: sticky;
+    top: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+.new-sticker {
+    background: var(--gold);
+    color: #000;
+    display: inline-block;
+    padding: 3px 15px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+}
+
+.sidebar-content h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    color: var(--accent);
+}
+
+.sidebar-excerpt {
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    line-height: 1.4;
+    opacity: 0.8;
+    margin-bottom: 20px;
+}
+
+/* ФИКСИРОВАННОЕ ПРЕВЬЮ КАРТИНКИ */
+.hover-image-preview {
+    position: fixed;
+    display: none;      
+    top: 60%;
+    left: 55%;
+    transform: translateY(-50%);
+    z-index: 1000;
+    width: 240px;
+    height: 240px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    pointer-events: none; 
+    background-color: var(--paper);
+}
+
+.hover-image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
 
 /* Модальные окна */
 .modal {
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
 }
-.modal-content {
-    background: var(--paper); padding: 50px; border-radius: 15px;
-    max-width: 700px; width: 90%; max-height: 85vh; overflow-y: auto; position: relative;
-}
-.close-modal { position: absolute; top: 15px; right: 20px; font-size: 35px; border: none; background: none; color: var(--text); cursor: pointer; }
-.full-poem-text { white-space: pre-line; font-size: 1.4rem; font-style: italic; text-align: center; line-height: 1.6; }
 
-/* Форма входа */
-.auth-form { text-align: center; display: flex; flex-direction: column; gap: 15px; max-width: 400px; }
-.auth-form input { padding: 12px; border-radius: 8px; border: 1px solid var(--border); font-size: 1rem; }
-.submit-btn { background: var(--accent); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+.modal-content {
+    background: var(--paper);
+    padding: 40px;
+    border-radius: 15px;
+    max-width: 500px;
+    width: 85%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+}
+
+.close-modal { position: absolute; top: 15px; right: 20px; font-size: 35px; border: none; background: none; color: var(--text); cursor: pointer; }
+
+.full-poem-text {
+    white-space: pre-line;
+    font-family: 'Georgia', serif;
+    font-size: 1.1rem; 
+    font-weight: 400;
+    font-style: normal;
+    text-align: left;
+    line-height: 1.7; 
+    color: var(--text);
+    padding: 10px 0;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+}
 
 footer { text-align: center; padding: 50px 0; opacity: 0.6; font-size: 0.9rem; }
 
 @media (max-width: 850px) {
     .main-header { flex-direction: column; text-align: center; }
     .header-center { margin-right: 0; margin-top: 25px; }
+    .logo { font-size: 2.5rem; }
+    .main-content-layout { flex-direction: column; align-items: center; }
+    .new-poem-sidebar { width: 100%; max-width: 400px; order: -1; margin-bottom: 30px; }
+    .poems-grid { max-width: 100%; }
+    .hover-image-preview { display: none !important; } 
 }

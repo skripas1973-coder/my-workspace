@@ -4,8 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тихие строки — Скрыпник Сергей Анатольевич</title>
+    <link rel="icon" href="favicon.ico.jpg" type="image/jpeg">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Стили для всплывающего превью картинки */
+        .hover-image-preview {
+            position: fixed;
+            display: none;
+            pointer-events: none;
+            z-index: 9999;
+            width: 300px;
+            height: 300px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            border: 2px solid rgba(255,255,255,0.3);
+            background: #000;
+        }
+        .hover-image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -33,13 +55,29 @@
                 <li><a class="nav-link" data-category="love">Любовь</a></li>
                 <li><a class="nav-link" data-category="thoughts">Размышления</a></li>
                 <li><a class="nav-link" data-category="children">Детские</a></li>
+                <li><a class="nav-link" data-category="kitchen">Поэтическая кухня</a></li>
                 <li><a class="nav-link" data-category="humor">Юмор</a></li>
                 <li><a class="nav-link" data-category="homeland">Родина</a></li>
                 <li><a class="nav-link" data-category="military">Военные</a></li>
             </ul>
         </nav>
 
-        <div id="poemsGrid" class="poems-grid"></div>
+        <div class="main-content-layout">
+    <div id="poemsGrid" class="poems-grid"></div>
+
+    <aside class="new-poem-sidebar">
+        <div class="new-sticker">НОВИНКА</div>
+        <div class="sidebar-content">
+            <h3 id="newPoemTitle">Загрузка...</h3>
+            <p id="newPoemExcerpt">Здесь будет отрывок вашего самого свежего стихотворения...</p>
+            <button class="read-more-btn" onclick="openLatestPoem()">Читать полностью</button>
+        </div>
+    </aside>
+</div>
+
+        <div id="hover-image-container" class="hover-image-preview">
+            <img id="hover-image" src="" alt="Иллюстрация">
+        </div>
 
         <footer>
             <p>© 2026 Скрыпник Сергей Анатольевич. Все права защищены.</p>
@@ -66,5 +104,17 @@
 
     <script src="data.js"></script>
     <script src="script.js"></script>
+
+    <script>
+    document.addEventListener('copy', (event) => {
+        const selection = document.getSelection();
+        if (selection.toString().length > 0) {
+            const footer = `\n\n© Источник: Сергей Анатольевич Скрыпник — "Тихие строки"\nСайт автора: https://skrypnik-poetry.ru`;
+            event.clipboardData.setData('text/plain', selection.toString() + footer);
+            event.preventDefault();
+        }
+    });
+    </script>
+
 </body>
 </html>
