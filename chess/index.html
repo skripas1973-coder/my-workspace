@@ -1,0 +1,307 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>СКРИПА РЯДОМ: CHESS PRO v3.5</title>
+    <style>
+        :root { 
+            --neon: #66fcf1; 
+            --dark-bg: #0b0c10; 
+            --cell-white: #1f2833; 
+            --cell-black: #0b0c10; 
+            --accent: #45a29e;
+        }
+
+        body { 
+            background: var(--dark-bg); 
+            color: var(--neon); 
+            font-family: 'Segoe UI', sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            overflow-x: hidden;
+        }
+
+        .nav-header { margin: 20px 0; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        
+        .back-btn {
+            text-decoration: none; color: var(--accent); border: 1px solid var(--accent);
+            padding: 5px 15px; border-radius: 20px; font-size: 11px; text-transform: uppercase; transition: 0.3s;
+        }
+        .back-btn:hover { color: var(--neon); border-color: var(--neon); box-shadow: 0 0 10px var(--neon); }
+
+        .logo-svg { width: 50px; height: 50px; filter: drop-shadow(0 0 8px var(--neon)); }
+
+        .game-info { display: flex; gap: 20px; align-items: center; margin-bottom: 10px; }
+        .status { font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 5px var(--neon); min-height: 24px; color: #fff; }
+
+        .board { 
+            display: grid; grid-template-columns: repeat(8, 60px); grid-template-rows: repeat(8, 60px); 
+            border: 4px solid var(--accent); box-shadow: 0 0 40px rgba(0,0,0,0.5); 
+        }
+
+        .cell { 
+            width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; 
+            font-size: 42px; cursor: pointer; position: relative; user-select: none;
+        }
+        .cell.white { background: var(--cell-white); }
+        .cell.black { background: var(--cell-black); }
+
+        .white-piece { color: #fff; filter: drop-shadow(0 0 2px #000); }
+        .black-piece { color: var(--accent); filter: drop-shadow(0 0 2px #000); }
+
+        .selected { background: rgba(102, 252, 241, 0.4) !important; }
+        
+        .valid-dot::after {
+            content: ""; width: 12px; height: 12px; background: rgba(102, 252, 241, 0.5); 
+            border-radius: 50%; position: absolute;
+        }
+
+        .controls { margin: 20px; display: flex; gap: 10px; }
+        button {
+            background: transparent; color: var(--neon); border: 1px solid var(--neon);
+            padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 11px; text-transform: uppercase; transition: 0.3s;
+        }
+        button:hover { background: var(--neon); color: #000; }
+        button.active { background: var(--neon); color: #000; }
+    </style>
+</head>
+<body>
+
+<div class="nav-header">
+    <a href="../index.html" class="back-btn">← в меню</a>
+    <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M25 65Q25 35 50 35M75 65Q75 35 50 35" stroke="#66fcf1" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="50" cy="40" r="4" fill="#66fcf1"></circle>
+        <path d="M35 75L50 55L65 75" stroke="#45a29e" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <div style="font-size: 20px; font-weight: bold; letter-spacing: 3px;">СКРИПА РЯДОМ: CHESS</div>
+</div>
+
+<div class="game-info">
+    <div id="mode-display" style="color: var(--accent); font-size: 0.8rem;">РЕЖИМ: ПРОТИВ ИИ</div>
+    <div class="status" id="status">ВАШ ХОД (БЕЛЫЕ)</div>
+</div>
+
+<div id="board" class="board"></div>
+
+<div class="controls">
+    <button id="btnAI" class="active" onclick="setMode('AI')">Против ИИ</button>
+    <button id="btnPvP" onclick="setMode('PvP')">На двоих</button>
+    <button onclick="initGame()">Сброс</button>
+</div>
+
+<script>
+    const icons = { 'r':'♜','n':'♞','b':'♝','q':'♛','k':'♚','p':'♟','R':'♖','N':'♘','B':'♗','Q':'♕','K':'♔','P':'♙' };
+    const pieceWeights = { 'p': 10, 'n': 30, 'b': 30, 'r': 50, 'q': 90, 'k': 900 };
+    let board = [], turn = 'W', selected = null, mode = 'AI', gameOver = false;
+
+    function initGame() {
+        board = [
+            ['r','n','b','q','k','b','n','r'],
+            ['p','p','p','p','p','p','p','p'],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['P','P','P','P','P','P','P','P'],
+            ['R','N','B','Q','K','B','N','R']
+        ];
+        turn = 'W'; selected = null; gameOver = false;
+        document.getElementById('status').innerText = "ВАШ ХОД (БЕЛЫЕ)";
+        render();
+    }
+
+    function setMode(m) {
+        mode = m;
+        document.getElementById('btnAI').className = m === 'AI' ? 'active' : '';
+        document.getElementById('btnPvP').className = m === 'PvP' ? 'active' : '';
+        document.getElementById('mode-display').innerText = `РЕЖИМ: ${m === 'AI' ? 'ПРОТИВ ИИ' : 'НА ДВОИХ'}`;
+        initGame();
+    }
+
+    function render() {
+        const boardDiv = document.getElementById('board');
+        boardDiv.innerHTML = '';
+        const possibleMoves = selected ? getValidMoves(selected.r, selected.c) : [];
+
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                const cell = document.createElement('div');
+                cell.className = `cell ${(r + c) % 2 === 0 ? 'white' : 'black'}`;
+                const p = board[r][c];
+                if (p) {
+                    cell.innerText = icons[p];
+                    cell.classList.add(p === p.toUpperCase() ? 'white-piece' : 'black-piece');
+                }
+                if (selected && selected.r === r && selected.c === c) cell.classList.add('selected');
+                if (possibleMoves.some(m => m.r === r && m.c === c)) cell.classList.add('valid-dot');
+                
+                cell.onclick = () => handleClick(r, c);
+                boardDiv.appendChild(cell);
+            }
+        }
+    }
+
+    function handleClick(r, c) {
+        if (gameOver) return;
+        const p = board[r][c];
+        const isMyPiece = p && (turn === 'W' ? p === p.toUpperCase() : p === p.toLowerCase());
+
+        if (selected) {
+            const moves = getValidMoves(selected.r, selected.c);
+            const move = moves.find(m => m.r === r && m.c === c);
+            if (move) {
+                makeMove(selected.r, selected.c, r, c);
+                selected = null;
+                render();
+                
+                if (!gameOver && mode === 'AI' && turn === 'B') {
+                    document.getElementById('status').innerText = "ИИ ДУМАЕТ...";
+                    setTimeout(aiMove, 600);
+                }
+                return;
+            }
+        }
+        if (isMyPiece) { selected = {r, c}; render(); }
+        else { selected = null; render(); }
+    }
+
+    function makeMove(fR, fC, tR, tC) {
+        board[tR][tC] = board[fR][fC];
+        board[fR][fC] = '';
+        if (board[tR][tC] === 'P' && tR === 0) board[tR][tC] = 'Q';
+        if (board[tR][tC] === 'p' && tR === 7) board[tR][tC] = 'q';
+        
+        turn = turn === 'W' ? 'B' : 'W';
+        document.getElementById('status').innerText = turn === 'W' ? "ВАШ ХОД (БЕЛЫЕ)" : "ХОД ЧЕРНЫХ";
+        checkEndGame();
+    }
+
+    function getValidMoves(fR, fC) {
+        const moves = [];
+        for (let tR = 0; tR < 8; tR++) {
+            for (let tC = 0; tC < 8; tC++) {
+                if (canPieceMove(fR, fC, tR, tC)) {
+                    const originalTo = board[tR][tC];
+                    const originalFrom = board[fR][fC];
+                    board[tR][tC] = originalFrom;
+                    board[fR][fC] = '';
+                    if (!isKingInCheck(originalFrom === originalFrom.toUpperCase() ? 'W' : 'B')) {
+                        moves.push({r: tR, c: tC});
+                    }
+                    board[fR][fC] = originalFrom;
+                    board[tR][tC] = originalTo;
+                }
+            }
+        }
+        return moves;
+    }
+
+    function canPieceMove(fR, fC, tR, tC) {
+        if (fR === tR && fC === tC) return false;
+        const p = board[fR][fC].toLowerCase();
+        const isW = board[fR][fC] === board[fR][fC].toUpperCase();
+        const target = board[tR][tC];
+        if (target !== '' && (target === target.toUpperCase()) === isW) return false;
+
+        const dr = Math.abs(tR - fR), dc = Math.abs(tC - fC);
+        const sR = tR > fR ? 1 : tR < fR ? -1 : 0;
+        const sC = tC > fC ? 1 : tC < fC ? -1 : 0;
+
+        if (p === 'p') {
+            const dir = isW ? -1 : 1;
+            if (fC === tC && target === '') {
+                if (tR - fR === dir) return true;
+                if (tR - fR === 2 * dir && fR === (isW?6:1) && board[fR+dir][fC]==='') return true;
+            }
+            return (dr === 1 && dc === 1 && target !== '');
+        }
+        if (p === 'n') return (dr === 2 && dc === 1) || (dr === 1 && dc === 2);
+        if (p === 'k') return dr <= 1 && dc <= 1;
+        if (p === 'r' || p === 'b' || p === 'q') {
+            if (p === 'r' && fR !== tR && fC !== tC) return false;
+            if (p === 'b' && dr !== dc) return false;
+            if (p === 'q' && dr !== dc && fR !== tR && fC !== tC) return false;
+            let curR = fR + sR, curC = fC + sC;
+            while (curR !== tR || curC !== tC) {
+                if (board[curR][curC] !== '') return false;
+                curR += sR; curC += sC;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    function isKingInCheck(color) {
+        let kR, kC;
+        const king = color === 'W' ? 'K' : 'k';
+        for(let r=0; r<8; r++) for(let c=0; c<8; c++) if(board[r][c] === king) { kR=r; kC=c; }
+        if (kR === undefined) return false;
+        for(let r=0; r<8; r++) {
+            for(let c=0; c<8; c++) {
+                const p = board[r][c];
+                if (p && (color === 'W' ? p === p.toLowerCase() : p === p.toUpperCase())) {
+                    if (canPieceMove(r, c, kR, kC)) return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    function checkEndGame() {
+        let hasMoves = false;
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                const p = board[r][c];
+                if (p && (turn === 'W' ? p === p.toUpperCase() : p === p.toLowerCase())) {
+                    if (getValidMoves(r, c).length > 0) hasMoves = true;
+                }
+            }
+        }
+        if (!hasMoves) {
+            gameOver = true;
+            if (isKingInCheck(turn)) {
+                const winner = turn === 'W' ? "ЧЕРНЫЕ" : "БЕЛЫЕ";
+                document.getElementById('status').innerText = `МАТ! ПОБЕДА: ${winner}`;
+                alert(`МАТ! Победили ${winner}`);
+            } else {
+                document.getElementById('status').innerText = "НИЧЬЯ (ПАТ)";
+                alert("ПАТ! Ничья.");
+            }
+        }
+    }
+
+    function aiMove() {
+        if (gameOver) return;
+        let moves = [];
+        for(let r=0; r<8; r++) {
+            for(let c=0; c<8; c++) {
+                if(board[r][c] && board[r][c] === board[r][c].toLowerCase()) {
+                    const valid = getValidMoves(r, c);
+                    valid.forEach(m => {
+                        let score = 0;
+                        if (board[m.r][m.c] !== '') {
+                            score = pieceWeights[board[m.r][m.c].toLowerCase()] || 10;
+                        }
+                        moves.push({fR:r, fC:c, tR:m.r, tC:m.c, score});
+                    });
+                }
+            }
+        }
+
+        if(moves.length > 0) {
+            moves.sort((a,b) => b.score - a.score);
+            const bestMoves = moves.filter(m => m.score === moves[0].score);
+            const m = bestMoves[Math.floor(Math.random()*bestMoves.length)];
+            makeMove(m.fR, m.fC, m.tR, m.tC);
+        }
+        render();
+    }
+
+    initGame();
+</script>
+</body>
+</html>

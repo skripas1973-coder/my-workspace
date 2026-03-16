@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>СКРИПА РЯДОМ: ШАШКИ</title>
+    <style>
+        :root { --neon: #00ffcc; --bg: #050505; --red: #ff4422; --gold: #ffd700; }
+        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; }
+        
+        #logo { position: fixed; top: 15px; left: 15px; border: 2px solid var(--neon); padding: 5px 15px; font-weight: bold; letter-spacing: 2px; background: rgba(0,0,0,0.9); z-index: 1000; text-transform: uppercase; }
+
+        .game-view { display: flex; flex-direction: column; align-items: center; padding-top: 70px; width: 100%; }
+        .top-bar { margin-bottom: 15px; display: flex; gap: 10px; align-items: center; background: rgba(0,255,204,0.05); padding: 10px; border: 1px solid var(--neon); border-radius: 5px; }
+        .btn-ui { background: transparent; border: 1px solid var(--neon); color: var(--neon); padding: 8px 12px; cursor: pointer; font-family: inherit; text-decoration: none; font-size: 0.8rem; }
+        .btn-ui:hover { background: var(--neon); color: #000; }
+
+        .ch-board { display: grid; grid-template-columns: repeat(8, 55px); grid-template-rows: repeat(8, 55px); border: 8px solid #1a1a1a; }
+        .cell { width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; position: relative; }
+        .b-cell { background: #0c0c0c; }
+        .w-cell { background: #181818; }
+        .piece { width: 42px; height: 42px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; }
+        .p-human { background: radial-gradient(circle, #00aaff, #0044aa); box-shadow: 0 0 10px #0088ff; }
+        .p-ai { background: radial-gradient(circle, var(--red), #771100); box-shadow: 0 0 10px var(--red); }
+        .king { border: 3px solid var(--gold); }
+        .king::after { content: 'K'; color: var(--gold); font-weight: bold; }
+        .sel { outline: 3px solid white; box-shadow: 0 0 20px white !important; }
+        .must { animation: pulse 1s infinite; border: 2px solid red; }
+        .status-msg { margin: 10px; font-weight: bold; text-transform: uppercase; color: var(--gold); height: 20px; }
+        select { background: #000; color: var(--neon); border: 1px solid var(--neon); padding: 5px; font-family: inherit; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div id="logo">СКРИПА РЯДОМ</div>
+
+<div class="game-view">
+    <div class="top-bar">
+        <a href="../index.html" class="btn-ui">← В МЕНЮ</a>
+        <select id="ch-diff-select">
+            <option value="1">ДЕТСКИЙ</option>
+            <option value="2">СРЕДНИЙ</option>
+            <option value="4" selected>УЛЬТРА</option>
+        </select>
+        <button class="btn-ui" onclick="initCheckers()">СБРОС</button>
+    </div>
+    <div class="status-msg" id="ch-status">ВАШ ХОД</div>
+    <div id="ch-board" class="ch-board"></div>
+</div>
+
+<script>
+    // Здесь вставь всю логику шашек из своего скрипта (от chData до конца getPsimple)
+    let chData = { board:[], sel:null, turn:'H', lock:null };
+    function initCheckers() {
+        chData.board = Array(8).fill().map(() => Array(8).fill(null));
+        for(let r=0;r<8;r++) for(let c=0;c<8;c++) if((r+c)%2!==0){
+            if(r<3) chData.board[r][c] = {p:'A',k:false};
+            if(r>4) chData.board[r][c] = {p:'H',k:false};
+        }
+        chData.turn='H'; chData.sel=null; chData.lock=null; renderCh();
+    }
+    function renderCh() {
+        const b = document.getElementById('ch-board'); b.innerHTML = '';
+        const js = getChMoves(chData.turn, true);
+        document.getElementById('ch-status').innerText = js.length?"ОБЯЗАТЕЛЬНЫЙ БОЙ!": (chData.turn==='H'?"ВАШ ХОД":"ИИ ДУМАЕТ...");
+        for(let r=0;r<8;r++) for(let c=0;c<8;c++){
+            const cell = document.createElement('div');
+            cell.className = `cell ${(r+c)%2===0?'w-cell':'b-cell'}`;
+            const p = chData.board[r][c];
+            if(p){
+                const div = document.createElement('div');
+                div.className = `piece p-${p.p==='H'?'human':'ai'} ${p.k?'king':''}`;
+                if(chData.sel && chData.sel.r===r && chData.sel.c===c) div.classList.add('sel');
+                if(chData.turn==='H' && js.some(j=>j.f.r===r && j.f.c===c)) div.classList.add('must');
+                div.onclick = (e) => { e.stopPropagation(); if(chData.turn==='H'){
+                    if(js.length && !js.some(j=>j.f.r===r && j.f.c===c)) return;
+                    if(chData.lock && (chData.lock.r!==r || chData.lock.c!==c)) return;
+                    chData.sel={r,c}; renderCh();
+                }};
+                cell.appendChild(div);
+            }
+            cell.onclick = () => moveCh(r,c); b.appendChild(cell);
+        }
+    }
+    function moveCh(r,c) {
+        if(chData.turn!=='H' || !chData.sel) return;
+        const js = getPjumps(chData.sel.r, chData.sel.c, 'H').filter(m=>m.t.r===r && m.t.c===c);
+        const ms = getPsimple(chData.sel.r, chData.sel.c, 'H').filter(m=>m.t.r===r && m.t.c===c);
+        if(js.length){
+            executeChMove(js[0]);
+            if(getPjumps(r,c,'H').length){ chData.sel={r,c}; chData.lock={r,c}; renderCh(); }
+            else { endChTurn(); }
+        } else if(ms.length && !getChMoves('H',true).length){ executeChMove(ms[0]); endChTurn(); }
+    }
+    function executeChMove(m){
+        if(m.m) chData.board[m.m.r][m.m.c] = null;
+        chData.board[m.t.r][m.t.c] = chData.board[m.f.r][m.f.c];
+        chData.board[m.f.r][m.f.c] = null;
+        if(m.t.r===(m.p==='H'?0:7)) chData.board[m.t.r][m.t.c].k=true;
+    }
+    function endChTurn(){ chData.sel=null; chData.lock=null; chData.turn='A'; renderCh(); setTimeout(aiCh, 600); }
+    function aiCh(){
+        const diff = parseInt(document.getElementById('ch-diff-select').value);
+        let js = getChMoves('A', true);
+        if(js.length){
+            let m = js[0]; executeChMove(m);
+            if(getPjumps(m.t.r,m.t.c,'A').length){ renderCh(); setTimeout(aiCh, 400); return; }
+        } else {
+            let ms = getChMoves('A', false);
+            if(!ms.length){ alert("ПОБЕДА!"); window.location.href="../index.html"; return; }
+            executeChMove(diff===1?ms[Math.floor(Math.random()*ms.length)]:ms[0]);
+        }
+        chData.turn='H'; renderCh();
+    }
+    function getChMoves(p, onlyJ){
+        let l=[]; for(let r=0;r<8;r++) for(let c=0;c<8;c++) if(chData.board[r][c] && chData.board[r][c].p===p){
+            l.push(...getPjumps(r,c,p)); if(!onlyJ) l.push(...getPsimple(r,c,p));
+        } return onlyJ?l.filter(m=>m.m):l;
+    }
+    function getPjumps(r,c,p){
+        let j=[]; let drs=[[1,1],[1,-1],[-1,1],[-1,-1]]; let pc=chData.board[r][c];
+        drs.forEach(([dr,dc])=>{
+            if(pc.k){
+                let en=null; for(let d=1;d<8;d++){
+                    let cr=r+dr*d, cc=c+dc*d; if(cr<0||cr>7||cc<0||cc>7) break;
+                    let t=chData.board[cr][cc];
+                    if(t){ if(t.p!==p && !en) en={r:cr,c:cc}; else break; }
+                    else if(en) j.push({f:{r,c}, t:{r:cr,c:cc}, m:en, p:p});
+                }
+            } else {
+                let tr=r+dr*2, tc=c+dc*2, mr=r+dr, mc=c+dc;
+                if(tr>=0&&tr<8&&tc>=0&&tc<8&&!chData.board[tr][tc]&&chData.board[mr][mc]&&chData.board[mr][mc].p!==p)
+                    j.push({f:{r,c}, t:{r:tr, c:tc}, m:{r:mr,c:mc}, p:p});
+            }
+        }); return j;
+    }
+    function getPsimple(r,c,p){
+        let m=[]; let pc=chData.board[r][c];
+        let drs=pc.k?[[1,1],[1,-1],[-1,1],[-1,-1]]:(p==='A'?[[1,1],[1,-1]]:[[-1,1],[-1,-1]]);
+        drs.forEach(([dr,dc])=>{
+            if(pc.k){ for(let d=1;d<8;d++){
+                let tr=r+dr*d, tc=c+dc*d; if(tr>=0&&tr<8&&tc>=0&&tc<8&&!chData.board[tr][tc]) m.push({f:{r,c},t:{r:tr,c:tc},p:p}); else break;
+            } } else {
+                let tr=r+dr, tc=c+dc; if(tr>=0&&tr<8&&tc>=0&&tc<8&&!chData.board[tr][tc]) m.push({f:{r,c},t:{r:tr,c:tc},p:p});
+            }
+        }); return m;
+    }
+    initCheckers();
+</script>
+</body>
+</html>
