@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>СКРИПА РЯДОМ: NEON CHECKERS</title>
+    <style>
+        :root { 
+            --neon: #66fcf1; 
+            --dark-bg: #0b0c10; 
+            --cell-white: #1f2833; 
+            --cell-black: #0b0c10; 
+            --accent: #45a29e;
+            --red: #ff4422;
+        }
+
+        body { 
+            background: var(--dark-bg); 
+            color: var(--neon); 
+            font-family: 'Segoe UI', sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            overflow-x: hidden;
+        }
+
+        /* УНИВЕРСАЛЬНАЯ ШАПКА */
+        .scripa-header-fixed {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+
+        .main-logo-img {
+            width: 240px; 
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 0 20px rgba(102, 252, 241, 0.5));
+            transition: 0.3s;
+        }
+        .main-logo-img:hover { opacity: 0.8; }
+
+        .header-content {
+            margin-top: 80px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            text-decoration: none; color: var(--accent); border: 1px solid var(--accent);
+            padding: 5px 15px; border-radius: 20px; font-size: 11px; text-transform: uppercase; transition: 0.3s;
+        }
+        .back-btn:hover { color: var(--neon); border-color: var(--neon); box-shadow: 0 0 10px var(--neon); }
+
+        .game-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--neon);
+            text-shadow: 0 0 15px rgba(102, 252, 241, 0.5);
+            margin: 0;
+        }
+
+        .game-info { display: flex; gap: 20px; align-items: center; margin-bottom: 20px; }
+        .status { font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 5px var(--neon); min-height: 24px; color: #fff; text-transform: uppercase; }
+
+        .board { 
+            display: grid; grid-template-columns: repeat(8, 60px); grid-template-rows: repeat(8, 60px); 
+            border: 4px solid var(--accent); box-shadow: 0 0 40px rgba(0,0,0,0.5); 
+        }
+
+        .cell { 
+            width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; 
+            position: relative; user-select: none;
+        }
+        .cell.white { background: var(--cell-white); }
+        .cell.black { background: var(--cell-black); }
+
+        .piece {
+            width: 46px; height: 46px; border-radius: 50%;
+            cursor: pointer; z-index: 10; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .p-white { background: #fff; box-shadow: 0 0 15px rgba(255,255,255,0.4); }
+        .p-black { background: var(--neon); box-shadow: 0 0 15px var(--neon); }
+        
+        .king::after { content: '♔'; color: #000; font-size: 28px; font-weight: bold; }
+        .selected { transform: scale(1.15); outline: 2px solid #fff; box-shadow: 0 0 25px #fff !important; }
+        .must { border: 2px solid var(--red); animation: pulse 1s infinite; }
+
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+        .controls { margin: 30px; display: flex; gap: 10px; align-items: center; }
+        
+        button, select {
+            background: transparent; color: var(--neon); border: 1px solid var(--neon);
+            padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 11px; 
+            text-transform: uppercase; transition: 0.3s; font-family: inherit; outline: none;
+        }
+        button:hover, select:hover { background: var(--neon); color: #000; }
+        select option { background: var(--dark-bg); color: var(--neon); }
+        
+        @media (max-width: 600px) {
+            .scripa-header-fixed { position: relative; top: 0; left: 0; margin-bottom: 20px; }
+            .main-logo-img { width: 160px; }
+            .header-content { margin-top: 20px; }
+            .game-title { font-size: 1.5rem; }
+            .board { grid-template-columns: repeat(8, 40px); grid-template-rows: repeat(8, 40px); }
+            .cell { width: 40px; height: 40px; }
+            .piece { width: 32px; height: 32px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="scripa-header-fixed">
+    <a href="../index.html">
+        <img src="../assets/logo_games.png" alt="SCRIPA GAMES" class="main-logo-img" title="Вернуться в меню">
+    </a>
+</div>
+
+<div class="header-content">
+    <a href="../index.html" class="back-btn">← в меню</a>
+    <h1 class="game-title">НЕОНОВЫЕ ШАШКИ</h1>
+</div>
+
+<div class="game-info">
+    <div id="mode-display" style="color: var(--accent); font-size: 0.8rem; text-transform: uppercase;">РЕЖИМ: ИНИЦИАЛИЗАЦИЯ</div>
+    <div class="status" id="status">ВАШ ХОД</div>
+</div>
+
+<div id="board" class="board"></div>
+
+<div class="controls">
+    <select id="mode-select" onchange="initBoard()">
+        <option value="ai" selected>Против ИИ</option>
+        <option value="pvp">На двоих</option>
+    </select>
+
+    <select id="diff-select">
+        <option value="1">ДЕТСКИЙ</option>
+        <option value="2">СРЕДНИЙ</option>
+        <option value="4" selected>УЛЬТРА</option>
+    </select>
+    
+    <button onclick="initBoard()">Сброс</button>
+</div>
+
+<script>
+    let state = {
+        board: [],
+        turn: 'W', 
+        selected: null,
+        lockPiece: null,
+        mode: 'ai'
+    };
+
+    function initBoard() {
+        state.mode = document.getElementById('mode-select').value;
+        document.getElementById('mode-display').innerText = `РЕЖИМ: ${state.mode === 'ai' ? 'Против ИИ' : 'На двоих'}`;
+        state.board = Array(8).fill().map(() => Array(8).fill(null));
+        state.turn = 'W';
+        state.selected = null;
+        state.lockPiece = null;
+
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                if ((r + c) % 2 !== 0) {
+                    if (r < 3) state.board[r][c] = { color: 'B', king: false };
+                    if (r > 4) state.board[r][c] = { color: 'W', king: false };
+                }
+            }
+        }
+        render();
+    }
+
+    function render() {
+        const boardDiv = document.getElementById('board');
+        boardDiv.innerHTML = '';
+        const mustJump = getAllMoves(state.turn, true);
+        
+        document.getElementById('status').innerText = state.turn === 'W' ? 'ВАШ ХОД (Белые)' : (state.mode === 'ai' ? 'ИИ ДУМАЕТ...' : 'ХОД ЧЕРНЫХ');
+
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                const cell = document.createElement('div');
+                cell.className = `cell ${(r + c) % 2 === 0 ? 'white' : 'black'}`;
+                
+                const p = state.board[r][c];
+                if (p) {
+                    const pieceDiv = document.createElement('div');
+                    pieceDiv.className = `piece p-${p.color === 'W' ? 'white' : 'black'} ${p.king ? 'king' : ''}`;
+                    if (state.selected && state.selected.r === r && state.selected.c === c) pieceDiv.classList.add('selected');
+                    
+                    const canThisJump = mustJump.some(m => m.f.r === r && m.f.c === c);
+                    if (state.turn === p.color && canThisJump) pieceDiv.classList.add('must');
+
+                    pieceDiv.onclick = (e) => {
+                        e.stopPropagation();
+                        if (state.mode === 'ai' && state.turn === 'B') return;
+                        if (state.lockPiece && (state.lockPiece.r !== r || state.lockPiece.c !== c)) return;
+                        if (p.color === state.turn) {
+                            if (mustJump.length > 0 && !canThisJump) return;
+                            state.selected = { r, c };
+                            render();
+                        }
+                    };
+                    cell.appendChild(pieceDiv);
+                }
+
+                cell.onclick = () => handleMove(r, c);
+                boardDiv.appendChild(cell);
+            }
+        }
+    }
+
+    function handleMove(r, c) {
+        if (!state.selected) return;
+        const moves = getPieceMoves(state.selected.r, state.selected.c);
+        const move = moves.find(m => m.t.r === r && m.t.c === c);
+
+        if (move) {
+            executeMove(move);
+            const extraJumps = move.jump ? getPieceMoves(r, c).filter(m => m.jump) : [];
+            
+            if (move.jump && extraJumps.length > 0) {
+                state.selected = { r, c };
+                state.lockPiece = { r, c };
+                render();
+            } else {
+                state.selected = null;
+                state.lockPiece = null;
+                state.turn = state.turn === 'W' ? 'B' : 'W';
+                render();
+                if (state.mode === 'ai' && state.turn === 'B') setTimeout(runAI, 600);
+            }
+        }
+    }
+
+    function executeMove(m) {
+        const p = state.board[m.f.r][m.f.c];
+        state.board[m.t.r][m.t.c] = p;
+        state.board[m.f.r][m.f.c] = null;
+        if (m.jump) state.board[m.jump.r][m.jump.c] = null;
+        if ((p.color === 'W' && m.t.r === 0) || (p.color === 'B' && m.t.r === 7)) p.king = true;
+    }
+
+    function getPieceMoves(r, c) {
+        const p = state.board[r][c];
+        if (!p) return [];
+        const jumps = [], simples = [];
+        const dirs = [[1, 1], [1, -1], [-1, 1], [-1, -1]];
+
+        dirs.forEach(([dr, dc]) => {
+            const tr = r + dr, tc = c + dc;
+            if (tr >= 0 && tr < 8 && tc >= 0 && tc < 8 && !state.board[tr][tc]) {
+                if (p.king || (p.color === 'W' && dr === -1) || (p.color === 'B' && dr === 1)) {
+                    simples.push({ f: { r, c }, t: { r: tr, c: tc } });
+                }
+            }
+            const jr = r + dr * 2, jc = c + dc * 2;
+            if (jr >= 0 && jr < 8 && jc >= 0 && jc < 8 && !state.board[jr][jc]) {
+                const mid = state.board[r + dr][c + dc];
+                if (mid && mid.color !== p.color) {
+                    jumps.push({ f: { r, c }, t: { r: jr, c: jc }, jump: { r: r + dr, c: c + dc } });
+                }
+            }
+        });
+        return jumps.length > 0 ? jumps : simples;
+    }
+
+    function getAllMoves(color, onlyJumps) {
+        let all = [];
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                if (state.board[r][c]?.color === color) {
+                    all.push(...getPieceMoves(r, c));
+                }
+            }
+        }
+        const hasJump = all.some(m => m.jump);
+        if (hasJump) return all.filter(m => m.jump);
+        return onlyJumps ? [] : all;
+    }
+
+    function runAI() {
+        const diff = parseInt(document.getElementById('diff-select').value);
+        let moves = getAllMoves('B', false);
+        if (moves.length === 0) { alert("ВЫ ПОБЕДИЛИ!"); initBoard(); return; }
+
+        let move;
+        if (diff === 1) move = moves[Math.floor(Math.random() * moves.length)];
+        else {
+            const jumps = moves.filter(m => m.jump);
+            move = jumps.length > 0 ? jumps[0] : moves[0];
+        }
+
+        executeMove(move);
+        const extra = move.jump ? getPieceMoves(move.t.r, move.t.c).filter(m => m.jump) : [];
+        if (extra.length > 0) setTimeout(runAI, 400);
+        else { state.turn = 'W'; render(); }
+        
+        if (getAllMoves('W', false).length === 0) { alert("ИИ ПОБЕДИЛ!"); initBoard(); }
+    }
+
+    initBoard();
+</script>
+</body>
+</html>
