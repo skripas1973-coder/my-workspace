@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>СКРИПА РЯДОМ: TIC-TAC-TOE</title>
+    <style>
+        :root { 
+            --neon: #66fcf1; 
+            --dark-bg: #0b0c10; 
+            --cell-bg: #1f2833; 
+            --accent: #45a29e;
+            --x-color: #66fcf1;
+            --o-color: #ff4422;
+        }
+
+        body { 
+            background: var(--dark-bg); 
+            color: var(--neon); 
+            font-family: 'Segoe UI', sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            overflow-x: hidden;
+        }
+
+        /* УНИВЕРСАЛЬНАЯ ШАПКА */
+        .scripa-header-fixed {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+
+        .main-logo-img {
+            width: 240px; 
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 0 20px rgba(102, 252, 241, 0.5));
+            transition: 0.3s;
+        }
+        .main-logo-img:hover { opacity: 0.8; }
+
+        .header-content {
+            margin-top: 80px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            text-decoration: none; color: var(--accent); border: 1px solid var(--accent);
+            padding: 5px 15px; border-radius: 20px; font-size: 11px; text-transform: uppercase; transition: 0.3s;
+        }
+        .back-btn:hover { color: var(--neon); border-color: var(--neon); box-shadow: 0 0 10px var(--neon); }
+
+        .game-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--neon);
+            text-shadow: 0 0 15px rgba(102, 252, 241, 0.5);
+            margin: 0;
+        }
+
+        .game-info { display: flex; flex-direction: column; align-items: center; gap: 5px; margin-bottom: 20px; }
+        .status { font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 5px var(--neon); min-height: 24px; color: #fff; text-transform: uppercase; }
+
+        /* ИГРОВОЕ ПОЛЕ */
+        .board { 
+            display: grid;
+            gap: 5px;
+            background: var(--accent);
+            padding: 5px;
+            border-radius: 5px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
+        }
+
+        .cell { 
+            background: var(--cell-bg);
+            display: flex; align-items: center; justify-content: center; 
+            cursor: pointer; position: relative; transition: 0.2s;
+        }
+        .cell:hover { background: #2a3541; }
+        .cell.taken { cursor: default; }
+
+        .symbol { width: 80%; height: 80%; pointer-events: none; }
+        
+        .controls { margin: 30px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center; }
+        
+        button, select {
+            background: transparent; color: var(--neon); border: 1px solid var(--neon);
+            padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 11px; 
+            text-transform: uppercase; transition: 0.3s; font-family: inherit; outline: none;
+        }
+        button:hover, select:hover { background: var(--neon); color: #000; }
+        select option { background: var(--dark-bg); color: var(--neon); }
+        
+        @media (max-width: 600px) {
+            .scripa-header-fixed { position: relative; top: 0; left: 0; margin-bottom: 20px; }
+            .main-logo-img { width: 160px; }
+            .header-content { margin-top: 20px; }
+            .game-title { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="scripa-header-fixed">
+    <a href="../index.html">
+        <img src="../assets/logo_games.png" alt="SCRIPA GAMES" class="main-logo-img" title="Вернуться в меню">
+    </a>
+</div>
+
+<div class="header-content">
+    <a href="../index.html" class="back-btn">← в меню</a>
+    <h1 class="game-title">НЕОНОВЫЕ КРЕСТИКИ</h1>
+</div>
+
+<div class="game-info">
+    <div class="status" id="status">ВАШ ХОД</div>
+</div>
+
+<div id="board" class="board"></div>
+
+<div class="controls">
+    <select id="size-select" onchange="resetGame()">
+        <option value="3">Классика 3x3</option>
+        <option value="5">Поле 5x5</option>
+        <option value="10">Масштаб 10x10</option>
+    </select>
+
+    <select id="mode-select" onchange="resetGame()">
+        <option value="ai">Против ИИ</option>
+        <option value="pvp">На двоих</option>
+    </select>
+
+    <select id="diff-select">
+        <option value="easy">ДЕТСКИЙ</option>
+        <option value="medium">СРЕДНИЙ</option>
+        <option value="ultra" selected>УЛЬТРА</option>
+    </select>
+    
+    <button onclick="resetGame()">Сброс</button>
+</div>
+
+<script>
+    let board = [];
+    let size = 3;
+    let winNeed = 3;
+    let turn = 'X';
+    let active = true;
+
+    function resetGame() {
+        size = parseInt(document.getElementById('size-select').value);
+        winNeed = size === 3 ? 3 : 5;
+        board = Array(size * size).fill(null);
+        turn = 'X';
+        active = true;
+        document.getElementById('status').innerText = "ВАШ ХОД (X)";
+        buildBoard();
+    }
+
+    function buildBoard() {
+        const container = document.getElementById('board');
+        const boardWidth = Math.min(window.innerWidth - 40, 500);
+        const cellSize = (boardWidth / size) - 5;
+        
+        container.style.gridTemplateColumns = `repeat(${size}, ${cellSize}px)`;
+        container.style.gridTemplateRows = `repeat(${size}, ${cellSize}px)`;
+        container.innerHTML = '';
+
+        for (let i = 0; i < size * size; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.dataset.index = i;
+            cell.onclick = () => handleMove(i);
+            container.appendChild(cell);
+        }
+    }
+
+    function handleMove(i) {
+        if (!active || board[i]) return;
+
+        makeMove(i, turn);
+        
+        if (checkWin(i)) {
+            endGame(turn === 'X' ? "ПОБЕДА X!" : "ПОБЕДА O!");
+            return;
+        }
+        if (!board.includes(null)) {
+            endGame("НИЧЬЯ");
+            return;
+        }
+
+        turn = turn === 'X' ? 'O' : 'X';
+        document.getElementById('status').innerText = turn === 'X' ? "ХОД X" : "ХОД O";
+
+        if (active && turn === 'O' && document.getElementById('mode-select').value === 'ai') {
+            setTimeout(aiMove, 500);
+        }
+    }
+
+    function makeMove(i, symbol) {
+        board[i] = symbol;
+        const cell = document.querySelector(`[data-index='${i}']`);
+        cell.classList.add('taken');
+        
+        const color = symbol === 'X' ? 'var(--x-color)' : 'var(--o-color)';
+        cell.innerHTML = symbol === 'X' 
+            ? `<svg class="symbol" viewBox="0 0 100 100"><path d="M20 20 L80 80 M80 20 L20 80" stroke="${color}" stroke-width="10" stroke-linecap="round"/></svg>`
+            : `<svg class="symbol" viewBox="0 0 100 100"><circle cx="50" cy="50" r="35" stroke="${color}" stroke-width="10" fill="none"/></svg>`;
+    }
+
+    function aiMove() {
+        const diff = document.getElementById('diff-select').value;
+        let index;
+
+        if (diff === 'easy') {
+            let empty = board.map((v, i) => v === null ? i : null).filter(v => v !== null);
+            index = empty[Math.floor(Math.random() * empty.length)];
+        } else {
+            index = findBestMove('O') || findBestMove('X') || board.indexOf(null);
+        }
+
+        if (index !== -1) handleMove(index);
+    }
+
+    function findBestMove(sym) {
+        for (let i = 0; i < board.length; i++) {
+            if (!board[i]) {
+                board[i] = sym;
+                if (checkWin(i)) { board[i] = null; return i; }
+                board[i] = null;
+            }
+        }
+        return null;
+    }
+
+    function checkWin(idx) {
+        const r = Math.floor(idx / size);
+        const c = idx % size;
+        const sym = board[idx];
+
+        const dirs = [
+            [0, 1], [1, 0], [1, 1], [1, -1]
+        ];
+
+        for (let [dr, dc] of dirs) {
+            let count = 1;
+            for (let step = 1; step < winNeed; step++) {
+                let nr = r + dr * step, nc = c + dc * step;
+                if (nr >= 0 && nr < size && nc >= 0 && nc < size && board[nr * size + nc] === sym) count++;
+                else break;
+            }
+            for (let step = 1; step < winNeed; step++) {
+                let nr = r - dr * step, nc = c - dc * step;
+                if (nr >= 0 && nr < size && nc >= 0 && nc < size && board[nr * size + nc] === sym) count++;
+                else break;
+            }
+            if (count >= winNeed) return true;
+        }
+        return false;
+    }
+
+    function endGame(msg) {
+        active = false;
+        document.getElementById('status').innerText = msg;
+    }
+
+    window.onresize = buildBoard;
+    resetGame();
+</script>
+</body>
+</html>
