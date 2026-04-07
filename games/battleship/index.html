@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>СКРИПА РЯДОМ: BATTLESHIP NEON</title>
+    <style>
+        :root { 
+            --neon: #66fcf1; 
+            --dark-bg: #0b0c10; 
+            --accent: #45a29e;
+            --hit: #ff4422;
+            --miss: #1f2833;
+        }
+
+        body { 
+            background: var(--dark-bg); color: var(--neon); 
+            font-family: 'Segoe UI', sans-serif; 
+            display: flex; flex-direction: column; align-items: center; 
+            min-height: 100vh; margin: 0; overflow-x: hidden;
+        }
+
+        /* УНИВЕРСАЛЬНАЯ ШАПКА */
+        .scripa-header-fixed {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+
+        .main-logo-img {
+            width: 240px; 
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 0 20px rgba(102, 252, 241, 0.5));
+            transition: 0.3s;
+        }
+        .main-logo-img:hover { opacity: 0.8; }
+
+        .header-content {
+            margin-top: 80px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            text-decoration: none; color: var(--accent); border: 1px solid var(--accent);
+            padding: 5px 15px; border-radius: 20px; font-size: 11px; text-transform: uppercase; transition: 0.3s;
+        }
+        .back-btn:hover { color: var(--neon); border-color: var(--neon); box-shadow: 0 0 10px var(--neon); }
+
+        .game-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--neon);
+            text-shadow: 0 0 15px rgba(102, 252, 241, 0.5);
+            margin: 0;
+        }
+
+        .boards-container { display: flex; gap: 40px; flex-wrap: wrap; justify-content: center; padding: 20px; }
+        .board-wrapper { text-align: center; }
+        .board-label { margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); font-size: 0.8rem; }
+
+        .grid { 
+            display: grid; grid-template-columns: repeat(11, 30px); grid-template-rows: repeat(11, 30px); 
+            gap: 2px; background: var(--accent); border: 2px solid var(--accent); 
+        }
+
+        .cell { 
+            background: var(--dark-bg); display: flex; align-items: center; justify-content: center; 
+            font-size: 10px; cursor: pointer; transition: 0.2s; position: relative;
+        }
+        .cell.coord { background: var(--cell-white); color: var(--accent); cursor: default; font-weight: bold; }
+        .cell.ship { background: #1f2833; border: 1px solid var(--neon); }
+        .cell.hit { background: var(--hit); box-shadow: inset 0 0 10px #000; }
+        .cell.miss::after { content: ""; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+
+        .controls { margin-bottom: 40px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        button, select {
+            background: transparent; color: var(--neon); border: 1px solid var(--neon);
+            padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 11px; 
+            text-transform: uppercase; transition: 0.3s; font-family: inherit;
+        }
+        button:hover, select:hover { background: var(--neon); color: #000; }
+        select option { background: var(--dark-bg); color: var(--neon); }
+
+        @media (max-width: 800px) {
+            .scripa-header-fixed { position: relative; top: 0; left: 0; margin-bottom: 10px; }
+            .main-logo-img { width: 160px; }
+            .header-content { margin-top: 10px; }
+            .grid { grid-template-columns: repeat(11, 25px); grid-template-rows: repeat(11, 25px); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="scripa-header-fixed">
+    <a href="../index.html">
+        <img src="../assets/logo_games.png" alt="SCRIPA GAMES" class="main-logo-img" title="Вернуться в меню">
+    </a>
+</div>
+
+<div class="header-content">
+    <a href="../index.html" class="back-btn">← в меню</a>
+    <h1 class="game-title">МОРСКОЙ БОЙ</h1>
+    <div id="status" style="margin-top: 10px; font-size: 0.9rem; letter-spacing: 1px;">РАССТАВЬТЕ КОРАБЛИ ИЛИ НАЖМИТЕ "АВТО"</div>
+</div>
+
+<div class="boards-container">
+    <div class="board-wrapper">
+        <div class="board-label">ФЛОТ СЕРЕЖИ</div>
+        <div id="player-grid" class="grid"></div>
+    </div>
+    <div class="board-wrapper">
+        <div class="board-label">РАДАР ПРОТИВНИКА</div>
+        <div id="enemy-grid" class="grid"></div>
+    </div>
+</div>
+
+<div class="controls">
+    <button onclick="autoPlace('player')">Авто-флот</button>
+    <button onclick="startGame()">В БОЙ!</button>
+    <select id="diff-select">
+        <option value="easy">ИИ: НОВИЧОК</option>
+        <option value="hunter" selected>ИИ: ОХОТНИК</option>
+    </select>
+    <button onclick="location.reload()">Сброс</button>
+</div>
+
+<script>
+    const SIZE = 10;
+    let playerBoard = Array(SIZE * SIZE).fill(0);
+    let enemyBoard = Array(SIZE * SIZE).fill(0);
+    let playerShots = Array(SIZE * SIZE).fill(0);
+    let enemyShots = Array(SIZE * SIZE).fill(0);
+    let gameStarted = false;
+    let hunterTarget = null;
+
+    function createGrid(elId, isEnemy) {
+        const grid = document.getElementById(elId);
+        grid.innerHTML = '';
+        grid.appendChild(createCell('', 'coord'));
+        'АБВГДЕЖЗИК'.split('').forEach(l => grid.appendChild(createCell(l, 'coord')));
+        
+        for (let r = 0; r < SIZE; r++) {
+            grid.appendChild(createCell(r + 1, 'coord'));
+            for (let c = 0; c < SIZE; c++) {
+                const cell = createCell('', 'cell');
+                cell.dataset.idx = r * SIZE + c;
+                if (isEnemy) cell.onclick = () => handleShot(r * SIZE + c);
+                grid.appendChild(cell);
+            }
+        }
+    }
+
+    function createCell(txt, cls) {
+        const div = document.createElement('div');
+        div.className = cls;
+        div.innerText = txt;
+        return div;
+    }
+
+    function autoPlace(who) {
+        const board = who === 'player' ? playerBoard : enemyBoard;
+        board.fill(0);
+        const ships = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
+        
+        ships.forEach(s => {
+            let placed = false;
+            while (!placed) {
+                let vertical = Math.random() > 0.5;
+                let r = Math.floor(Math.random() * SIZE);
+                let c = Math.floor(Math.random() * SIZE);
+                if (canPlace(board, r, c, s, vertical)) {
+                    for (let i = 0; i < s; i++) {
+                        let idx = vertical ? (r + i) * SIZE + c : r * SIZE + (c + i);
+                        board[idx] = 1;
+                    }
+                    placed = true;
+                }
+            }
+        });
+        render();
+    }
+
+    function canPlace(board, r, c, len, vert) {
+        for (let i = 0; i < len; i++) {
+            let currR = vert ? r + i : r;
+            let currC = vert ? c : c + i;
+            if (currR >= SIZE || currC >= SIZE || board[currR * SIZE + currC]) return false;
+            for (let dr = -1; dr <= 1; dr++) {
+                for (let dc = -1; dc <= 1; dc++) {
+                    let nr = currR + dr, nc = currC + dc;
+                    if (nr >= 0 && nr < SIZE && nc >= 0 && nc < SIZE && board[nr * SIZE + nc]) return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    function render() {
+        playerBoard.forEach((val, i) => {
+            const cell = document.querySelector(`#player-grid [data-idx='${i}']`);
+            if (cell) {
+                cell.className = 'cell' + (val ? ' ship' : '');
+                if (enemyShots[i]) cell.classList.add(val ? 'hit' : 'miss');
+            }
+        });
+        enemyBoard.forEach((val, i) => {
+            const cell = document.querySelector(`#enemy-grid [data-idx='${i}']`);
+            if (cell) {
+                cell.className = 'cell';
+                if (playerShots[i]) cell.classList.add(val ? 'hit' : 'miss');
+            }
+        });
+    }
+
+    function startGame() {
+        if (!playerBoard.includes(1)) { alert('Сначала расставьте флот!'); return; }
+        autoPlace('enemy');
+        gameStarted = true;
+        document.getElementById('status').innerText = "ОГОНЬ ПО ПРАВОМУ БОРТУ!";
+    }
+
+    function handleShot(idx) {
+        if (!gameStarted || playerShots[idx]) return;
+        playerShots[idx] = 1;
+        render();
+        if (enemyBoard[idx]) {
+            checkWin();
+        } else {
+            gameStarted = false;
+            setTimeout(aiTurn, 600);
+        }
+    }
+
+    function aiTurn() {
+        let idx;
+        const diff = document.getElementById('diff-select').value;
+        if (diff === 'hunter' && hunterTarget !== null) {
+            idx = findHunterShot();
+        } else {
+            let empty = enemyShots.map((v, i) => v === 0 ? i : null).filter(v => v !== null);
+            idx = empty[Math.floor(Math.random() * empty.length)];
+        }
+        enemyShots[idx] = 1;
+        if (playerBoard[idx]) {
+            hunterTarget = idx;
+            render();
+            if (!checkWin()) setTimeout(aiTurn, 600);
+        } else {
+            gameStarted = true;
+            render();
+        }
+    }
+
+    function findHunterShot() {
+        const neighbors = [hunterTarget-1, hunterTarget+1, hunterTarget-SIZE, hunterTarget+SIZE];
+        const valid = neighbors.filter(n => n >= 0 && n < 100 && enemyShots[n] === 0);
+        if (valid.length > 0) return valid[0];
+        hunterTarget = null;
+        let empty = enemyShots.map((v, i) => v === 0 ? i : null).filter(v => v !== null);
+        return empty[Math.floor(Math.random() * empty.length)];
+    }
+
+    function checkWin() {
+        const playerLost = playerBoard.every((v, i) => v === 0 || enemyShots[i] === 1);
+        const enemyLost = enemyBoard.every((v, i) => v === 0 || playerShots[i] === 1);
+        if (playerLost || enemyLost) {
+            document.getElementById('status').innerText = playerLost ? "ВАШ ФЛОТ ПОТОПЛЕН!" : "ПОБЕДА! ВЫ ХОЗЯИН МОРЕЙ!";
+            gameStarted = false;
+            return true;
+        }
+        return false;
+    }
+
+    createGrid('player-grid', false);
+    createGrid('enemy-grid', true);
+</script>
+</body>
+</html>
