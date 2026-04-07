@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>СКРИПА РЯДОМ: GAME HUB</title>
+    <style>
+        :root { 
+            --neon: #66fcf1; --dark-bg: #0b0c10; --accent: #45a29e; --card-bg: #1f2833;
+        }
+        body { 
+            background: var(--dark-bg); color: var(--neon); font-family: 'Segoe UI', sans-serif; 
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; padding-bottom: 50px;
+        }
+        .header { margin: 40px 0; text-align: center; }
+        .main-logo { width: 300px; filter: drop-shadow(0 0 20px rgba(102, 252, 241, 0.4)); }
+        .hub-title { font-size: 2.5rem; letter-spacing: 8px; text-transform: uppercase; margin: 20px 0; text-shadow: 0 0 15px var(--neon); }
+        
+        .games-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px; width: 90%; max-width: 1200px;
+        }
+        .game-card {
+            background: var(--card-bg); border: 1px solid var(--accent); border-radius: 15px;
+            padding: 25px; text-align: center; text-decoration: none; color: var(--neon);
+            transition: 0.3s; position: relative;
+        }
+        .game-card:hover { transform: translateY(-5px); border-color: var(--neon); box-shadow: 0 5px 20px rgba(102, 252, 241, 0.2); }
+        .game-card h2 { margin: 10px 0 5px 0; text-transform: uppercase; font-size: 1.2rem; }
+        .game-card p { font-size: 0.75rem; color: var(--accent); margin: 0; }
+        .game-icon { font-size: 2.5rem; }
+        footer { margin-top: auto; padding: 40px; font-size: 0.7rem; color: var(--accent); letter-spacing: 2px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="assets/logo_games.png" alt="SCRIPA GAMES" class="main-logo">
+    </div>
+    <h1 class="hub-title">ИГРОВОЙ ХАБ</h1>
+    <div class="games-grid">
+        <a href="battleship/index.html" class="game-card"><span class="game-icon">⚓</span><h2>Морской Бой</h2><p>Тактика на радарах</p></a>
+        <a href="chess/index.html" class="game-card"><span class="game-icon">♔</span><h2>Шахматы</h2><p>Интеллектуальная дуэль</p></a>
+        <a href="checkers/index.html" class="game-card"><span class="game-icon">⛃</span><h2>Шашки</h2><p>Классика Кибер-Классицизма</p></a>
+        <a href="tetris/index.html" class="game-card"><span class="game-icon">⬚</span><h2>Тетрис</h2><p>Космическая скорость</p></a>
+        <a href="tictactoe/index.html" class="game-card"><span class="game-icon">✕/◯</span><h2>Крестики-Нолики</h2><p>Масштабные сражения</p></a>
+    </div>
+    <footer>© 2026 СКРИПА РЯДОМ. Игровой портал.</footer>
+</body>
+</html>
