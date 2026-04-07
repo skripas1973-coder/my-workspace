@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тихие строки - Сборник стихотворений Скрыпник Сергея</title>
+    <meta name="description" content="Стихи, которые хочется перечитывать. Сборник поэзии Скрыпник Сергея на разные темы: природа, любовь, размышления, родина.">
+    <meta name="keywords" content="стихи, поэзия, Скрыпник Сергей, русская поэзия, современная поэзия">
+    <meta name="author" content="Скрыпник Сергей">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --accent: #6B4423;
+            --accent-light: #8B6F47;
+            --text: #333;
+            --text-light: #666;
+            --paper: #fcfaf8;
+            --border: #e8e4db;
+            --shadow: 0 2px 12px rgba(107, 68, 35, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            background-color: var(--paper);
+            color: var(--text);
+            line-height: 1.75;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Header */
+        header {
+            min-height: 120px;
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .author-photo {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--accent);
+            background: linear-gradient(135deg, #e8e4db, #d4cfc4);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .author-photo:hover {
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            font-weight: 400;
+            color: var(--accent);
+            letter-spacing: -0.5px;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .logo-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        /* Navigation */
+        nav {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.05rem;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: var(--transition);
+            cursor: pointer;
+            display: block;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+            background-color: rgba(107, 68, 35, 0.05);
+        }
+
+        nav a.active {
+            color: var(--accent);
+            font-weight: 600;
+            background-color: rgba(107, 68, 35, 0.08);
+            box-shadow: inset 0 0 0 1px rgba(107, 68, 35, 0.2);
+        }
+
+        /* Main Content */
+        main {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+
+        .page-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: var(--accent);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .page-header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .page-header p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 20px auto 0;
+        }
+
+        /* Featured Poem */
+        .featured-poem {
+            background-color: white;
+            border-radius: 12px;
+            padding: 45px;
+            margin-bottom: 50px;
+            box-shadow: var(--shadow);
+            position: relative;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .featured-poem:hover {
+            box-shadow: 0 8px 25px rgba(107, 68, 35, 0.12);
+        }
+
+        .featured-poem::before {
+            content: '⭐ Избранное';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: white;
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(107, 68, 35, 0.2);
+        }
+
+        .poem-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.1rem;
+            color: var(--accent);
+            margin: 25px 0 20px;
+            text-align: center;
+            line-height: 1.3;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .poem-title::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 2px;
+            background-color: var(--accent);
+            border-radius: 2px;
+        }
+
+        .poem-text {
+            font-size: 1.25rem;
+            text-align: center;
+            max-width: 650px;
+            margin: 0 auto;
+            font-style: italic;
+            line-height: 1.9;
+        }
+
+        .poem-text p {
+            margin-bottom: 16px;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+
+        .poem-text p:hover {
+            opacity: 1;
+        }
+
+        .poem-author {
+            display: block;
+            text-align: right;
+            margin-top: 25px;
+            color: var(--text-light);
+            font-size: 1.1rem;
+            font-style: normal;
+            font-weight: 500;
+        }
+
+        /* Poems Grid */
+        .poems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 32px;
+            margin-bottom: 60px;
+        }
+
+        .poem-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .poem-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            opacity: 0.8;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .poem-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(107, 68, 35, 0.15);
+        }
+
+        .poem-card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            color: var(--accent);
+            margin-bottom: 15px;
+            line-height: 1.3;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .poem-card-title::before {
+            content: '📜';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            opacity: 0.6;
+        }
+
+        .poem-card-text {
+            color: var(--text-light);
+            font-size: 1.05rem;
+            font-style: italic;
+            margin-bottom: 20px;
+            flex: 1;
+            line-height: 1.6;
+        }
+
+        .poem-card-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.05rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            align-self: flex-start;
+            padding: 6px 12px;
+            border-radius: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .poem-card-link:hover {
+            background-color: rgba(107, 68, 35, 0.08);
+            padding: 6px 16px;
+        }
+
+        .poem-card-link::after {
+            content: '→';
+            transition: transform 0.3s;
+        }
+
+        .poem-card-link:hover::after {
+            transform: translateX(4px);
+        }
+
+        /* Empty State */
+        .no-poems {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            font-style: italic;
+        }
+
+        /* Subscribe Section */
+        .subscribe-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            max-width: 650px;
+            margin: 0 auto 60px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .subscribe-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+        }
+
+        .subscribe-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.9rem;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        .subscribe-section p {
+            color: var(--text-light);
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+
+        .subscribe-form {
+            display: flex;
+            gap: 10px;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        .subscribe-form input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.05rem;
+            transition: var(--transition);
+        }
+
+        .subscribe-form input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(107, 68, 35, 0.1);
+        }
+
+        .subscribe-form button {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 6px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .subscribe-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(107, 68, 35, 0.2);
+        }
+
+        .subscribe-form button:active {
+            transform: translateY(0);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 28px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: var(--transition);
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-modal:hover {
+            color: var(--accent);
+            background: rgba(107, 68, 35, 0.1);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            color: var(--text-light);
+            padding: 30px 0;
+            font-size: 0.95rem;
+            border-top: 1px solid var(--border);
+            margin-top: 20px;
+        }
+
+        footer p {
+            opacity: 0.8;
+        }
+
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .author-photo {
+                position: relative;
+                left: auto;
+                top: auto;
+                transform: none;
+                margin: 0 auto 15px;
+                width: 100px;
+                height: 100px;
+            }
+            
+            header {
+                text-align: center;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            nav {
+                position: static;
+                margin-top: 20px;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .poems-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .featured-poem {
+                padding: 30px 20px;
+                margin-bottom: 30px;
+            }
+            
+            .poem-title {
+                font-size: 1.8rem;
+            }
+            
+            .poem-text {
+                font-size: 1.15rem;
+            }
+            
+            .subscribe-form {
+                flex-direction: column;
+            }
+            
+            .modal-content {
+                padding: 30px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 0 10px;
+            }
+            
+            .poem-title {
+                font-size: 1.6rem;
+            }
+            
+            .subscribe-section {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="https://i.postimg.cc/p59tftPJ/author-jpg.jpg" alt="Портрет автора Скрыпник Сергея" class="author-photo">
+            <div class="logo">Тихие строки</div>
+            <div class="logo-subtitle">Стихи, которые хочется перечитывать</div>
+        </header>
+
+        <nav aria-label="Основная навигация">
+            <ul>
+                <li><a class="nav-link active" data-category="all">Все стихи</a></li>
+                <li><a class="nav-link" data-category="nature">Природа</a></li>
+                <li><a class="nav-link" data-category="love">Любовь</a></li>
+                <li><a class="nav-link" data-category="thoughts">Размышления</a></li>
+                <li><a class="nav-link" data-category="homeland">Родина</a></li>
+                <li><a class="nav-link" data-category="humor">Юмор</a></li>
+                <li><a class="nav-link" data-category="military">Военные</a></li>
+            </ul>
+        </nav>
+
+        <main>
+            <header class="page-header">
+                <h1>Все стихи</h1>
+                <p>Сборник стихотворений Скрыпник Сергея. Каждое стихотворение — это история, эмоция, момент жизни.</p>
+            </header>
+
+            <article class="featured-poem">
+                <h1 class="poem-title">За стеклом</h1>
+                <div class="poem-text">
+                    <p>За стеклом — метель и фонари,<br>
+                    За спиной — чужие голоса.<br>
+                    Он считает снежные круги,<br>
+                    Про себя зовёт: «Мама…»</p>
+                    
+                    <p>Не кричит — лишь губы шевелят,<br>
+                    Тихий звук не долетает никуда.<br>
+                    Но метель его, как будто понимая,<br>
+                    Завивается в узор у края стекла.</p>
+                    
+                    <p>И в этом узоре — не снег и не лёд,<br>
+                    А что-то похожее на её платок,<br>
+                    На тот, что она в день прихода наденет,<br>
+                    Когда шаг её раздастся в коридоре в срок.</p>
+                    
+                    <p class="poem-author">— Скрыпник Сергей</p>
+                </div>
+            </article>
+
+            <section class="poems-grid" id="poemsGrid">
+                <!-- Стихи будут загружены через JavaScript -->
+            </section>
+
+            <section class="subscribe-section" aria-label="Подписка на новые стихи">
+                <h2>Получать новые стихи на почту</h2>
+                <p>Раз в неделю — одно стихотворение. Без спама, без рекламы.</p>
+                <form class="subscribe-form" id="subscribeForm">
+                    <input type="email" placeholder="Ваш email" name="email" required>
+                    <button type="submit" id="subscribeBtn">Подписаться</button>
+                </form>
+                <p id="subscribeMessage" style="display: none; margin-top: 15px; color: var(--accent);"></p>
+            </section>
+        </main>
+
+        <footer>
+            <p>© Скрыпник Сергей, 2026. Все права защищены.</p>
+            <p>Сайт создан с любовью к поэзии</p>
+        </footer>
+    </div>
+
+    <!-- Модальное окно для просмотра стихотворения -->
+    <div class="modal" id="poemModal">
+        <div class="modal-content">
+            <button class="close-modal" aria-label="Закрыть">×</button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Данные стихотворений
+        const poemsData = [
+            {
+                id: 1,
+                title: "Утёс",
+                category: "nature",
+                excerpt: "Он стоит там, где ветер сильнее,<br>Где волна бьёт в гранит сотни лет.<br>Не герой — просто камень в морщине...",
+                fullText: `Утёс
+        
+Он стоит там, где ветер сильнее,
+Где волна бьёт в гранит сотни лет.
+Не герой — просто камень в морщине,
+Что забыл про покой и про свет.
+
+И чайки, что кружат над вершиной,
+Не поют, а кричат о былом,
+О том времени, дальнем и синем,
+Когда море было его же окном.
+
+А теперь он молчит и не шепчет,
+Хоть в нём трещины — будто слова,
+Что когда-то, быть может, в предшественник
+Записал он, чтоб помнила синева.
+
+— Скрыпник Сергей`
+            },
+            {
+                id: 2,
+                title: "Первый снег",
+                category: "nature",
+                excerpt: "Летит без спешки, без причины,<br>Кружась над пустынной площадью.<br>И в этом танце — вся Россия...",
+                fullText: `Первый снег
+
+Летит без спешки, без причины,
+Кружась над пустынной площадью.
+И в этом танце — вся Россия,
+Вся грусть её, вся тихая мощь.
+
+Падает на ладони, тает,
+Как обещание, данное в срок.
+Земля его тихо встречает,
+Как давно потерянный вздох.
+
+И кажется, будто не снег это,
+А письма, что шли сотни лет,
+От тех, кто уже не ответит,
+Но верит, что счастье где-то есть.
+
+— Скрыпник Сергей`
+            },
+            {
+                id: 3,
+                title: "Рассвет над Волгой",
+                category: "homeland",
+                excerpt: "Вода ещё темна, но небо —<br>Уже розовеет на востоке.<br>И тишина такая древняя...",
+                fullText: `Рассвет над Волгой
+
+Вода ещё темна, но небо —
+Уже розовеет на востоке.
+И тишина такая древняя,
+Будто мир только что родился.
+
+По берегу туман клубится,
+Пряча дальние огни.
+И река, как время, длится,
+Не спеша течёт они.
+
+А на том берегу — заводы,
+Дома, люди, суета…
+Но здесь, в этом утре, годы
+Замирают, как мечта.
+
+— Скрыпник Сергей`
+            },
+            {
+                id: 4,
+                title: "Письмо из прошлого",
+                category: "thoughts",
+                excerpt: "Нашёл в старом шкафу конверт,<br>Где дата — мой семнадцатый год.<br>И понял: тот мальчик умер...",
+                fullText: `Письмо из прошлого
+
+Нашёл в старом шкафу конверт,
+Где дата — мой семнадцатый год.
+И понял: тот мальчик умер,
+Хотя я стою у окна.
+
+Он писал о любви и о море,
+О том, что всё будет иначе.
+Не знал, что душа — в заморе,
+Что счастье бывает в удаче.
+
+Я письмо не вскрывал — не решился,
+Побоялся его голоса.
+Пусть лежит, как в гробу, притаился
+Тот, кем я был когда-то тогда.
+
+— Скрыпник Сергей`
+            },
+            {
+                id: 5,
+                title: "Осенний вальс",
+                category: "love",
+                excerpt: "Листья падают в такт молчанию,<br>Танцуют последний вальс.<br>И кажется, это прощание...",
+                fullText: `Осенний вальс
+
+Листья падают в такт молчанию,
+Танцуют последний вальс.
+И кажется, это прощание
+С тем, что было между нас.
+
+Ты ушла, не оставив следа,
+Только запах духов в шкафу.
+И осенняя эта победа
+Над теплом, что жило в углу.
+
+Но я помню твой смех и взгляд,
+И руки, что грели в метель.
+Пусть любовь наша — осенний закат,
+Но в нём было столько апрель.
+
+— Скрыпник Сергей`
+            },
+            {
+                id: 6,
+                title: "Солдатский сон",
+                category: "military",
+                excerpt: "Снится ему не война, а река,<br>Где в детстве ловил он пескарей.<br>И матери тихая рука...",
+                fullText: `Солдатский сон
+
+Снится ему не война, а река,
+Где в детстве ловил он пескарей.
+И матери тихая рука
+На лбу, будто ангел над ней.
+
+А вокруг — взрывы и дым,
+Товарищ кричит в темноте.
+Но он уплывает, незрим,
+В тот майский, далёкий рассвет.
+
+И, может, не проснётся он,
+Останется там, у реки,
+Где мирный стоит вагон,
+И нет ни войны, ни тоски.
+
+— Скрыпник Сергей`
+            }
+        ];
+
+        // Текущая категория
+        let currentCategory = 'all';
+
+        // Функция для рендеринга стихов
+        function renderPoems(category) {
+            const grid = document.getElementById('poemsGrid');
+            
+            // Фильтруем стихи
+            let poemsToShow;
+            if (category === 'all') {
+                poemsToShow = poemsData;
+            } else {
+                poemsToShow = poemsData.filter(poem => poem.category === category);
+            }
+            
+            // Очищаем сетку
+            grid.innerHTML = '';
+            
+            // Если нет стихов
+            if (poemsToShow.length === 0) {
+                grid.innerHTML = '<div class="no-poems">В этой категории пока нет стихотворений</div>';
+                return;
+            }
+            
+            // Рендерим стихи
+            poemsToShow.forEach(poem => {
+                const poemCard = document.createElement('article');
+                poemCard.className = 'poem-card';
+                poemCard.setAttribute('data-id', poem.id);
+                
+                poemCard.innerHTML = `
+                    <h3 class="poem-card-title">${poem.title}</h3>
+                    <div class="poem-card-text">${poem.excerpt}</div>
+                    <button class="poem-card-link" data-id="${poem.id}">Читать полностью</button>
+                `;
+                
+                grid.appendChild(poemCard);
+            });
+            
+            // Добавляем обработчики для кнопок "Читать полностью"
+            document.querySelectorAll('.poem-card-link').forEach(button => {
+                button.addEventListener('click', function() {
+                    const poemId = parseInt(this.getAttribute('data-id'));
+                    showPoemModal(poemId);
+                });
+            });
+        }
+
+        // Функция для обновления заголовка
+        function updatePageHeader(category) {
+            const title = document.querySelector('.page-header h1');
+            const subtitle = document.querySelector('.page-header p');
+            
+            const titles = {
+                'all': 'Все стихи',
+                'nature': 'Стихи о природе',
+                'love': 'Любовная лирика',
+                'thoughts': 'Философские размышления',
+                'homeland': 'О Родине',
+                'humor': 'Юмористические стихи',
+                'military': 'Военная поэзия'
+            };
+            
+            const subtitles = {
+                'all': 'Сборник стихотворений Скрыпник Сергея. Каждое стихотворение — это история, эмоция, момент жизни.',
+                'nature': 'Поэзия, вдохновлённая красотой природы. Стихи о временах года, пейзажах и природных явлениях.',
+                'love': 'Стихи о любви, нежности, разлуке и надежде. Лирика, которая трогает сердце.',
+                'thoughts': 'Размышления о жизни, времени, смысле бытия и вечных вопросах.',
+                'homeland': 'Поэзия, посвящённая Родине, России, родным местам и национальному духу.',
+                'humor': 'Лёгкие, ироничные и весёлые стихотворения, которые поднимают настроение.',
+                'military': 'Стихи о войне и мире, памяти, подвиге и ценности человеческой жизни.'
+            };
+            
+            title.textContent = titles[category] || 'Все стихи';
+            subtitle.textContent = subtitles[category] || 'Сборник стихотворений Скрыпник Сергея';
+        }
+
+        // Функция для переключения категории
+        function switchCategory(category) {
+            // Обновляем текущую категорию
+            currentCategory = category;
+            
+            // Обновляем активную кнопку в навигации
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.getAttribute('data-category') === category) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            
+            // Обновляем заголовок
+            updatePageHeader(category);
+            
+            // Рендерим стихи
+            renderPoems(category);
+            
+            // Прокручиваем к началу
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Инициализация навигации
+        function initNavigation() {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const category = this.getAttribute('data-category');
+                    switchCategory(category);
+                });
+            });
+        }
+
+        // Функция для показа модального окна
+        function showPoemModal(poemId) {
+            const modal = document.getElementById('poemModal');
+            const modalContent = document.getElementById('modalContent');
+            
+            // Находим стихотворение
+            const poem = poemsData.find(p => p.id === poemId);
+            
+            if (poem) {
+                // Форматируем текст
+                const formattedText = poem.fullText.replace(/\n/g, '<br>');
+                
+                modalContent.innerHTML = `
+                    <h2 class="poem-title" style="margin-top: 0;">${poem.title}</h2>
+                    <div class="poem-text" style="text-align: left; font-style: normal;">
+                        ${formattedText}
+                    </div>
+                `;
+                
+                // Показываем модальное окно
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        // Функция для инициализации модального окна
+        function initModal() {
+            const modal = document.getElementById('poemModal');
+            const closeBtn = document.querySelector('.close-modal');
+            
+            closeBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.style.display === 'flex') {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        }
+
+        // Функция для инициализации формы подписки
+        function initSubscribeForm() {
+            const form = document.getElementById('subscribeForm');
+            const message = document.getElementById('subscribeMessage');
+            const button = document.getElementById('subscribeBtn');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const emailInput = this.querySelector('input[name="email"]');
+                const email = emailInput.value.trim();
+                
+                // Простая валидация email
+                if (!email.includes('@') || !email.includes('.')) {
+                    showMessage('Пожалуйста, введите корректный email адрес', 'error');
+                    emailInput.focus();
+                    return;
+                }
+                
+                // Показываем загрузку
+                const originalText = button.textContent;
+                button.innerHTML = 'Отправка... <span class="loading"></span>';
+                button.disabled = true;
+                
+                // Имитация отправки
+                setTimeout(() => {
+                    showMessage(`Спасибо за подписку! Новые стихи будут приходить на ${email}`, 'success');
+                    form.reset();
+                    button.textContent = originalText;
+                    button.disabled = false;
+                }, 1500);
+            });
+            
+            function showMessage(text, type) {
+                message.textContent = text;
+                message.style.color = type === 'error' ? '#dc3545' : 'var(--accent)';
+                message.style.display = 'block';
+                
+                setTimeout(() => {
+                    message.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Рендерим начальные стихи
+            renderPoems(currentCategory);
+            
+            // Инициализируем навигацию
+            initNavigation();
+            
+            // Инициализируем модальное окно
+            initModal();
+            
+            // Инициализируем форму подписки
+            initSubscribeForm();
+        });
+    </script>
+</body>
+</html>
