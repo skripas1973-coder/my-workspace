@@ -9,7 +9,7 @@
             --neon: #66fcf1; 
             --dark: #0b0c10; 
             --accent: #45a29e; 
-            --logo-red: #ff2d55; /* Тот самый «розоватый» красный из логотипа */
+            --logo-red: #ff2d55; 
         }
 
         body { 
@@ -26,17 +26,16 @@
             box-sizing: border-box;
         }
 
-        /* Логотип исправлен: размер, четкость и отсутствие ссылки */
-        .logo-wrapper { margin-bottom: 20px; display: inline-block; }
+        /* Тот самый большой и четкий логотип */
+        .logo-container { margin-bottom: 20px; }
         .logo { 
-            width: 240px; /* Увеличен размер до эталонного */
+            width: 240px; 
             height: auto; 
             display: block;
             filter: drop-shadow(0 0 15px rgba(102, 252, 241, 0.6));
-            image-rendering: -webkit-optimize-contrast; /* Повышенная четкость */
+            image-rendering: -webkit-optimize-contrast;
         }
 
-        /* Заголовок и линия */
         .title-wrapper {
             display: flex;
             flex-direction: column;
@@ -57,11 +56,11 @@
             width: 100%; 
             height: 2px;
             background: var(--logo-red);
-            box-shadow: 0 0 15px var(--logo-red); /* Свечение в цвет линии */
+            box-shadow: 0 0 15px var(--logo-red);
             border-radius: 2px;
         }
 
-        /* Сетка: 3 колонки */
+        /* Сетка под твои папки */
         .menu-container { 
             display: grid;
             grid-template-columns: repeat(3, 1fr); 
@@ -103,7 +102,7 @@
             letter-spacing: 2px; margin-bottom: 8px;
         }
 
-        .game-card span { display: block; font-size: 0.8rem; opacity: 0.7; text-transform: none; }
+        .game-card span { display: block; font-size: 0.8rem; opacity: 0.7; }
 
         footer {
             margin-top: auto; padding-top: 50px;
@@ -120,7 +119,7 @@
 </head>
 <body>
 
-    <div class="logo-wrapper">
+    <div class="logo-container">
         <img src="assets/logo_games.png" alt="SCRIPA LOGO" class="logo">
     </div>
 
@@ -166,12 +165,6 @@
             <div class="icon" style="font-weight: bold; font-size: 2rem;">2048</div>
             <div class="game-title">2048</div>
             <span>Программный Ямб</span>
-        </a>
-
-        <a href="#" class="game-card" style="opacity: 0.4; cursor: default;">
-            <div class="icon">&#8987;</div>
-            <div class="game-title">Скоро</div>
-            <span>Новый вызов...</span>
         </a>
     </div>
 
