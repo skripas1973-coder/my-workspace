@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCRIPA GAMES: ИГРОВОЙ ХАБ</title>
+    <style>
+        :root { 
+            --neon: #66fcf1; 
+            --dark: #0b0c10; 
+            --accent: #45a29e; 
+            --logo-red: #ff2d55; /* Тот самый «розоватый» красный из логотипа */
+        }
+
+        body { 
+            background: var(--dark); 
+            color: var(--neon); 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: flex-start; 
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 30px 15px; 
+            box-sizing: border-box;
+        }
+
+        /* Логотип исправлен: размер, четкость и отсутствие ссылки */
+        .logo-wrapper { margin-bottom: 20px; display: inline-block; }
+        .logo { 
+            width: 240px; /* Увеличен размер до эталонного */
+            height: auto; 
+            display: block;
+            filter: drop-shadow(0 0 15px rgba(102, 252, 241, 0.6));
+            image-rendering: -webkit-optimize-contrast; /* Повышенная четкость */
+        }
+
+        /* Заголовок и линия */
+        .title-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        h1 { 
+            font-size: 1.8rem; 
+            letter-spacing: 5px; 
+            text-transform: uppercase; 
+            margin: 10px 0 5px; 
+            text-shadow: 0 0 15px var(--neon);
+            white-space: nowrap;
+        }
+
+        .red-line {
+            width: 100%; 
+            height: 2px;
+            background: var(--logo-red);
+            box-shadow: 0 0 15px var(--logo-red); /* Свечение в цвет линии */
+            border-radius: 2px;
+        }
+
+        /* Сетка: 3 колонки */
+        .menu-container { 
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 20px; 
+            width: 100%; 
+            max-width: 1000px; 
+            justify-items: center;
+        }
+
+        .game-card { 
+            width: 100%; max-width: 300px; 
+            padding: 35px 20px; 
+            border: 1px solid var(--accent); 
+            border-radius: 15px; 
+            text-decoration: none; 
+            color: var(--neon); 
+            text-align: center; 
+            transition: 0.3s;
+            background: rgba(102, 252, 241, 0.03);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .game-card:hover { 
+            background: var(--neon); 
+            color: var(--dark); 
+            box-shadow: 0 0 30px var(--neon); 
+            transform: translateY(-5px);
+        }
+
+        .icon { font-size: 2.5rem; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; min-height: 50px; }
+        
+        .icon svg { fill: currentColor; width: 48px; height: 48px; }
+
+        .game-title {
+            font-size: 1.1rem; font-weight: bold; text-transform: uppercase;
+            letter-spacing: 2px; margin-bottom: 8px;
+        }
+
+        .game-card span { display: block; font-size: 0.8rem; opacity: 0.7; text-transform: none; }
+
+        footer {
+            margin-top: auto; padding-top: 50px;
+            color: var(--accent); font-size: 0.85rem;
+            letter-spacing: 1px; text-align: center;
+        }
+
+        @media (max-width: 900px) {
+            .menu-container { grid-template-columns: 1fr; }
+            h1 { font-size: 1.5rem; letter-spacing: 3px; }
+            .logo { width: 180px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="logo-wrapper">
+        <img src="assets/logo_games.png" alt="SCRIPA LOGO" class="logo">
+    </div>
+
+    <div class="title-wrapper">
+        <h1>Игровой Хаб</h1>
+        <div class="red-line"></div>
+    </div>
+    
+    <div class="menu-container">
+        <a href="chess/index.html" class="game-card">
+            <div class="icon">&#9823;</div>
+            <div class="game-title">Шахматы</div>
+            <span>Интеллект на доске</span>
+        </a>
+
+        <a href="tetris/index.html" class="game-card">
+            <div class="icon">&#9639;</div>
+            <div class="game-title">Тетрис</div>
+            <span>Упорядочи хаос</span>
+        </a>
+
+        <a href="checkers/index.html" class="game-card">
+            <div class="icon">
+                <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6Z" /></svg>
+            </div>
+            <div class="game-title">Шашки</div>
+            <span>Классика в деталях</span>
+        </a>
+
+        <a href="tictactoe/index.html" class="game-card">
+            <div class="icon">&#9587;</div>
+            <div class="game-title">Крестики</div>
+            <span>Быстрая победа</span>
+        </a>
+
+        <a href="battleship/index.html" class="game-card">
+            <div class="icon">&#9875;</div>
+            <div class="game-title">Морской Бой</div>
+            <span>Тактика на радарах</span>
+        </a>
+
+        <a href="2048/index.html" class="game-card">
+            <div class="icon" style="font-weight: bold; font-size: 2rem;">2048</div>
+            <div class="game-title">2048</div>
+            <span>Программный Ямб</span>
+        </a>
+
+        <a href="#" class="game-card" style="opacity: 0.4; cursor: default;">
+            <div class="icon">&#8987;</div>
+            <div class="game-title">Скоро</div>
+            <span>Новый вызов...</span>
+        </a>
+    </div>
+
+    <footer>
+        © 2026 СКРИПА РЯДОМ. Игровой портал
+    </footer>
+
+</body>
+</html>
