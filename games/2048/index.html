@@ -22,10 +22,10 @@
             margin: 0;
             min-height: 100vh;
             overflow-x: hidden;
-            /* touch-action: none убирает лишние свайпы браузера на мобилках */
             touch-action: none;
         }
 
+        /* УНИВЕРСАЛЬНАЯ ШАПКА ИЗ КРЕСТИКОВ */
         .scripa-header-fixed {
             position: absolute;
             top: 20px;
@@ -40,6 +40,7 @@
             filter: drop-shadow(0 0 20px rgba(102, 252, 241, 0.5));
             transition: 0.3s;
         }
+        .main-logo-img:hover { opacity: 0.8; }
 
         .header-content {
             margin-top: 80px;
@@ -75,6 +76,7 @@
             color: #fff;
         }
 
+        /* ИГРОВОЕ ПОЛЕ: Размер как в Крестиках */
         .game-board {
             position: relative;
             background: var(--accent);
@@ -93,7 +95,10 @@
             height: 100%;
         }
 
-        .grid-cell { background: var(--cell-bg); border-radius: 2px; }
+        .grid-cell { 
+            background: var(--cell-bg); 
+            border-radius: 2px; 
+        }
 
         .tile {
             position: absolute;
@@ -112,6 +117,7 @@
             box-shadow: inset 0 0 10px rgba(102, 252, 241, 0.2);
         }
 
+        /* КНОПКА СБРОС: Стиль из Крестиков */
         .controls { margin: 30px; }
         button {
             background: transparent; color: var(--neon); border: 1px solid var(--neon);
@@ -131,7 +137,9 @@
 <body>
 
 <div class="scripa-header-fixed">
-    <img src="../assets/logo_games.png" alt="SCRIPA GAMES" class="main-logo-img">
+    <a href="../index.html">
+        <img src="../assets/logo_games.png" alt="SCRIPA GAMES" class="main-logo-img">
+    </a>
 </div>
 
 <div class="header-content">
@@ -159,6 +167,7 @@
     const scoreEl = document.getElementById('score');
     let board = Array(16).fill(null);
     let score = 0;
+    let size = 4;
 
     function resetGame() {
         board = Array(16).fill(null);
@@ -183,21 +192,25 @@
     function render() {
         container.querySelectorAll('.tile').forEach(t => t.remove());
         const boardWidth = container.clientWidth;
-        const cellSize = (boardWidth - 10) / 4;
+        const cellSize = (boardWidth - 10) / 4; // 10 - это суммарные отступы gap (5px * 2 края не считаем, считаем зазоры)
         
         board.forEach((val, i) => {
             if (val !== null) {
                 const tile = document.createElement('div');
                 tile.className = 'tile';
                 tile.innerText = val;
+                
+                // Рассчитываем позицию точно как в сетке Grid
                 const col = i % 4;
                 const row = Math.floor(i / 4);
                 const gap = 5;
-                const offset = 5;
+                const offset = 5; // padding поля
+                
                 tile.style.width = `${cellSize - gap}px`;
                 tile.style.height = `${cellSize - gap}px`;
                 tile.style.left = `${col * cellSize + offset}px`;
                 tile.style.top = `${row * cellSize + offset}px`;
+                
                 container.appendChild(tile);
             }
         });
@@ -228,14 +241,7 @@
         if (moved) { board = res; addTile(); scoreEl.innerText = score; render(); }
     }
 
-    // ИСПРАВЛЕНО: Теперь страница не скроллится при нажатии стрелок
-    window.onkeydown = e => { 
-        if(e.key.includes('Arrow')) {
-            e.preventDefault(); // Блокирует прокрутку страницы
-            slide(e.key.replace('Arrow','').toLowerCase());
-        }
-    };
-
+    window.onkeydown = e => { if(e.key.includes('Arrow')) slide(e.key.replace('Arrow','').toLowerCase()); };
     let sX, sY;
     container.ontouchstart = e => { sX = e.touches[0].clientX; sY = e.touches[0].clientY; };
     container.ontouchend = e => {
