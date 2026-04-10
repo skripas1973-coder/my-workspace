@@ -24,16 +24,30 @@
             margin: 0; 
             padding: 30px 15px; 
             box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        /* ФОН МАТРИЦА (IDENTICAL TO TETRIS) */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+            filter: blur(1px);
         }
 
         /* Тот самый большой и четкий логотип */
-        .logo-container { margin-bottom: 20px; }
+        .logo-container { margin-bottom: 20px; z-index: 1; }
         .logo { 
             width: 240px; 
             height: auto; 
             display: block;
             filter: drop-shadow(0 0 15px rgba(102, 252, 241, 0.6));
             image-rendering: -webkit-optimize-contrast;
+            transition: 0.3s;
         }
 
         .title-wrapper {
@@ -41,6 +55,7 @@
             flex-direction: column;
             align-items: center;
             margin-bottom: 40px;
+            z-index: 1;
         }
 
         h1 { 
@@ -68,6 +83,7 @@
             width: 100%; 
             max-width: 1000px; 
             justify-items: center;
+            z-index: 1;
         }
 
         .game-card { 
@@ -79,11 +95,12 @@
             color: var(--neon); 
             text-align: center; 
             transition: 0.3s;
-            background: rgba(102, 252, 241, 0.03);
+            background: rgba(11, 12, 16, 0.8);
             display: flex;
             flex-direction: column;
             align-items: center;
             box-sizing: border-box;
+            backdrop-filter: blur(2px);
         }
 
         .game-card:hover { 
@@ -108,6 +125,7 @@
             margin-top: auto; padding-top: 50px;
             color: var(--accent); font-size: 0.85rem;
             letter-spacing: 1px; text-align: center;
+            z-index: 1;
         }
 
         @media (max-width: 900px) {
@@ -118,6 +136,8 @@
     </style>
 </head>
 <body>
+
+    <canvas id="bg-canvas"></canvas>
 
     <div class="logo-container">
         <img src="assets/logo_games.png" alt="SCRIPA LOGO" class="logo">
@@ -172,5 +192,43 @@
         © 2026 СКРИПА РЯДОМ. Игровой портал
     </footer>
 
+    <script>
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        let columns = Math.floor(width / 20);
+        const drops = Array(columns).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(11, 12, 16, 0.1)';
+            ctx.fillRect(0, 0, width, height);
+
+            ctx.fillStyle = '#66fcf1';
+            ctx.font = '15px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = Math.floor(Math.random() * 10);
+                ctx.fillText(text, i * 20, drops[i] * 20);
+
+                if (drops[i] * 20 > height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            columns = Math.floor(width / 20);
+            drops.length = columns;
+            drops.fill(1);
+        });
+
+        setInterval(drawMatrix, 50);
+    </script>
 </body>
 </html>
