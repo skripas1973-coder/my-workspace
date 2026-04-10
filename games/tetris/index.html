@@ -63,10 +63,6 @@
             display: block;
         }
 
-        .main-logo-img:hover {
-            filter: drop-shadow(0 0 25px var(--neon)) brightness(1.2);
-        }
-
         .btn-menu {
             border: 1px solid var(--neon);
             background: transparent;
@@ -116,7 +112,6 @@
             height: 72vh; 
             width: auto;
             aspect-ratio: 1/2;
-            touch-action: none;
         }
 
         .info-side { 
@@ -150,7 +145,7 @@
         .keys-grid {
             display: grid;
             grid-template-areas: ". up ." "left down right";
-            gap: 4px; justify-content: center; margin-bottom: 10px;
+            gap: 4px; justify-content: center; margin-bottom: 8px;
         }
         .key-btn {
             width: 30px; height: 30px; border: 1px solid var(--neon); border-radius: 6px;
@@ -178,14 +173,18 @@
             .scripa-header-fixed { display: none; }
             .game-title { font-size: 1.2rem; margin-bottom: 5px; }
             .btn-menu { padding: 4px 15px; font-size: 0.7rem; margin-bottom: 5px; }
-            .main-container { gap: 8px; }
-            canvas#tetris { height: 75vh; } 
-            .info-side { width: 85px; gap: 8px; }
+            .main-container { gap: 10px; }
+            canvas#tetris { height: 65vh; } 
+            .info-side { width: 95px; gap: 8px; }
             .info-box { padding: 5px; }
             .value { font-size: 0.9rem; }
-            canvas#next { width: 40px; height: 40px; }
-            .controls-card { display: none; }
-            .btn-reset { font-size: 0.7rem; padding: 6px; }
+            canvas#next { width: 45px; height: 45px; }
+            .controls-card { padding: 8px; }
+            .controls-card h3 { display: none; }
+            .keys-grid { gap: 2px; }
+            .key-btn { width: 22px; height: 22px; font-size: 0.6rem; }
+            .control-legend { font-size: 0.5rem; text-align: center; }
+            .btn-reset { font-size: 0.65rem; padding: 6px; }
         }
 
         #pause-overlay {
@@ -250,13 +249,12 @@
     </div>
 
     <script>
-        // BACKGROUND MATRIX
+        // MATRIX BACKGROUND
         const bgCanvas = document.getElementById('bg-canvas');
         const bgCtx = bgCanvas.getContext('2d');
         let width = bgCanvas.width = window.innerWidth;
         let height = bgCanvas.height = window.innerHeight;
-        const columns = Math.floor(width / 20);
-        const drops = Array(columns).fill(1);
+        const drops = Array(Math.floor(width / 20)).fill(1);
 
         function drawBackground() {
             bgCtx.fillStyle = 'rgba(11, 12, 16, 0.1)';
@@ -271,7 +269,7 @@
             }
         }
 
-        // GAME LOGIC
+        // ENGINE
         const canvas = document.getElementById('tetris');
         const context = canvas.getContext('2d');
         const nextCanvas = document.getElementById('next');
@@ -280,9 +278,7 @@
         context.scale(20, 20);
         nextContext.scale(20, 20);
 
-        const colors = [
-            null, '#66fcf1', '#45a29e', '#00e676', '#ff1744', '#ff9100', '#ffea00', '#2979ff'
-        ];
+        const colors = [null, '#66fcf1', '#45a29e', '#00e676', '#ff1744', '#ff9100', '#ffea00', '#2979ff'];
 
         function createPiece(type) {
             if (type === 'I') return [[0,1,0,0],[0,1,0,0],[0,1,0,0],[0,1,0,0]];
@@ -315,7 +311,6 @@
             context.fillRect(0, 0, canvas.width, canvas.height);
             drawMatrix(arena, {x: 0, y: 0}, context);
             drawMatrix(player.matrix, player.pos, context);
-
             nextContext.fillStyle = '#000';
             nextContext.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
             if (player.next) drawMatrix(player.next, {x: 1, y: 1}, nextContext);
@@ -358,8 +353,8 @@
                 for (let x = 0; x < arena[y].length; ++x) {
                     if (arena[y][x] === 0) continue outer;
                 }
-                const row = arena.splice(y, 1)[0].fill(0);
-                arena.unshift(row);
+                arena.splice(y, 1);
+                arena.unshift(new Array(12).fill(0));
                 player.score += 10;
                 document.getElementById('score').innerText = player.score;
                 y++;
@@ -372,25 +367,13 @@
             player.next = createPiece(pcs[pcs.length * Math.random() | 0]);
             player.pos.y = 0;
             player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
-            if (collide(arena, player)) {
-                arena.forEach(r => r.fill(0));
-                player.score = 0;
-                document.getElementById('score').innerText = 0;
-            }
+            if (collide(arena, player)) { arena.forEach(r => r.fill(0)); player.score = 0; document.getElementById('score').innerText = 0; }
         }
 
-        function resetGame() {
-            arena.forEach(r => r.fill(0));
-            player.score = 0;
-            document.getElementById('score').innerText = 0;
-            playerReset();
-        }
+        function resetGame() { arena.forEach(r => r.fill(0)); player.score = 0; document.getElementById('score').innerText = 0; playerReset(); }
 
         let paused = false;
-        function togglePause() { 
-            paused = !paused; 
-            document.getElementById('pause-overlay').style.display = paused ? 'flex' : 'none';
-        }
+        function togglePause() { paused = !paused; document.getElementById('pause-overlay').style.display = paused ? 'flex' : 'none'; }
 
         let dropCounter = 0;
         let lastTime = 0;
@@ -405,76 +388,63 @@
             requestAnimationFrame(update);
         }
 
-        // ПК УПРАВЛЕНИЕ
+        // PC CONTROL
         window.addEventListener('keydown', e => {
-            if (paused && e.keyCode !== 80 && e.keyCode !== 27) return;
-            if (e.keyCode === 37) player.pos.x--, collide(arena, player) && player.pos.x++;
-            if (e.keyCode === 39) player.pos.x++, collide(arena, player) && player.pos.x--;
+            if (paused && ![80, 27].includes(e.keyCode)) return;
+            if (e.keyCode === 37) { player.pos.x--; if(collide(arena, player)) player.pos.x++; }
+            if (e.keyCode === 39) { player.pos.x++; if(collide(arena, player)) player.pos.x--; }
             if (e.keyCode === 40) playerDrop();
             if (e.keyCode === 38) playerRotate();
-            if (e.keyCode === 80 || e.keyCode === 27) togglePause();
+            if ([80, 27, 32].includes(e.keyCode)) togglePause();
         });
 
-        // СУПЕР-СЕНСОР: ПРЯМОЙ ДИФФЕРЕНЦИАЛЬНЫЙ МЕТОД
+        // SENSOR + ANTI-CHAOS
         let lastX, lastY, startX, startY, startTime;
+        let verticalLock = false;
         const gameArea = document.getElementById('game-area');
 
         gameArea.addEventListener('touchstart', e => { 
             startX = lastX = e.touches[0].clientX; 
             startY = lastY = e.touches[0].clientY; 
             startTime = Date.now();
+            verticalLock = false;
             if (!paused) e.preventDefault(); 
         }, {passive:false});
 
         gameArea.addEventListener('touchmove', e => {
             if (paused) return;
             e.preventDefault();
-            
-            const currentX = e.touches[0].clientX;
-            const currentY = e.touches[0].clientY;
-            
-            const diffX = currentX - lastX;
-            const diffY = currentY - lastY;
+            const curX = e.touches[0].clientX;
+            const curY = e.touches[0].clientY;
+            const diffX = curX - lastX;
+            const diffY = curY - lastY;
 
-            // Дискретное горизонтальное шагание (15px)
-            if (Math.abs(diffX) > 15) {
-                if (diffX > 0) {
-                    player.pos.x++;
-                    if (collide(arena, player)) player.pos.x--;
-                } else {
-                    player.pos.x--;
-                    if (collide(arena, player)) player.pos.x++;
-                }
-                lastX = currentX; // Сброс точки отсчета для "протаскивания"
+            // Блокировка осей (Мертвая зона)
+            if (!verticalLock && Math.abs(curY - startY) > Math.abs(curX - startX) * 1.5 && Math.abs(curY - startY) > 10) {
+                verticalLock = true;
             }
 
-            // Дифференциальное падение (20px)
+            // Горизонталь работает только без лока
+            if (!verticalLock && Math.abs(diffX) > 15) {
+                if (diffX > 0) { player.pos.x++; if(collide(arena, player)) player.pos.x--; }
+                else { player.pos.x--; if(collide(arena, player)) player.pos.x++; }
+                lastX = curX;
+            }
+
             if (diffY > 20) {
                 playerDrop();
-                lastY = currentY; // Сброс точки отсчета
+                lastY = curY;
             }
         }, {passive:false});
 
         gameArea.addEventListener('touchend', e => {
             if (paused) return;
-            
-            const endX = e.changedTouches[0].clientX;
-            const endY = e.changedTouches[0].clientY;
-            const duration = Date.now() - startTime;
-            const totalDist = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
-
-            // Логика тапа (Поворот)
-            if (duration < 150 && totalDist < 10) {
-                playerRotate();
-            }
+            const dist = Math.sqrt(Math.pow(e.changedTouches[0].clientX - startX, 2) + Math.pow(e.changedTouches[0].clientY - startY, 2));
+            if (Date.now() - startTime < 150 && dist < 8) playerRotate();
             e.preventDefault();
         }, {passive:false});
 
-        window.addEventListener('resize', () => {
-            width = bgCanvas.width = window.innerWidth;
-            height = bgCanvas.height = window.innerHeight;
-        });
-
+        window.addEventListener('resize', () => { width = bgCanvas.width = window.innerWidth; height = bgCanvas.height = window.innerHeight; });
         playerReset();
         update();
     </script>
