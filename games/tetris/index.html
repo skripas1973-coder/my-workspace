@@ -37,7 +37,6 @@
             touch-action: none;
         }
 
-        /* ФОН «КАТАКОМБЫ ЦИФР» */
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -49,7 +48,6 @@
             filter: blur(1px);
         }
 
-        /* ЛОГОТИП SCRIPA [cite: 1] */
         .scripa-header-fixed {
             position: absolute;
             top: 20px;
@@ -69,7 +67,6 @@
             filter: drop-shadow(0 0 25px var(--neon)) brightness(1.2);
         }
 
-        /* НАВИГАЦИЯ */
         .btn-menu {
             border: 1px solid var(--neon);
             background: transparent;
@@ -88,7 +85,6 @@
         }
         .btn-menu:hover { background: rgba(102, 252, 241, 0.1); }
 
-        /* ЗАГОЛОВОК [cite: 4] */
         .game-title {
             font-size: 1.8rem;
             font-weight: bold;
@@ -99,7 +95,6 @@
             margin: 0 0 10px 0;
         }
 
-        /* КОНТЕЙНЕР ИГРЫ */
         .main-container {
             display: flex;
             gap: 20px;
@@ -124,7 +119,6 @@
             touch-action: none;
         }
 
-        /* ИНФО-ПАНЕЛЬ */
         .info-side { 
             display: flex; 
             flex-direction: column; 
@@ -144,7 +138,6 @@
         .value { font-size: 1.2rem; font-weight: bold; color: #fff; }
         canvas#next { width: 60px; height: 60px; margin: 0 auto; display: block; }
 
-        /* КАРТОЧКА УПРАВЛЕНИЯ ПК */
         .controls-card {
             border: 1px solid rgba(102, 252, 241, 0.2);
             border-radius: 12px;
@@ -166,7 +159,6 @@
         .control-legend { font-size: 0.65rem; color: #c5c6c7; line-height: 1.4; }
         .control-legend b { color: var(--neon); }
 
-        /* КНОПКА СБРОС */
         .btn-reset {
             border: 1px solid var(--neon);
             background: transparent;
@@ -182,15 +174,12 @@
         }
         .btn-reset:hover { background: rgba(102, 252, 241, 0.15); box-shadow: 0 0 15px var(--neon); }
 
-        /* АДАПТИВНОСТЬ [cite: 2] */
         @media (max-width: 768px) {
             .scripa-header-fixed { display: none; }
             .game-title { font-size: 1.2rem; margin-bottom: 5px; }
             .btn-menu { padding: 4px 15px; font-size: 0.7rem; margin-bottom: 5px; }
-            
             .main-container { gap: 8px; }
             canvas#tetris { height: 75vh; } 
-            
             .info-side { width: 85px; gap: 8px; }
             .info-box { padding: 5px; }
             .value { font-size: 0.9rem; }
@@ -261,7 +250,7 @@
     </div>
 
     <script>
-        // АНИМАЦИЯ ФОНА «КАТАКОМБЫ ЦИФР»
+        // BACKGROUND MATRIX
         const bgCanvas = document.getElementById('bg-canvas');
         const bgCtx = bgCanvas.getContext('2d');
         let width = bgCanvas.width = window.innerWidth;
@@ -282,7 +271,7 @@
             }
         }
 
-        // ЛОГИКА ТЕТРИСА
+        // GAME LOGIC
         const canvas = document.getElementById('tetris');
         const context = canvas.getContext('2d');
         const nextCanvas = document.getElementById('next');
@@ -340,6 +329,12 @@
                 }
             }
             return false;
+        }
+
+        function playerRotate() {
+            const old = player.matrix;
+            player.matrix = player.matrix[0].map((_, i) => player.matrix.map(row => row[i]).reverse());
+            if (collide(arena, player)) player.matrix = old;
         }
 
         function playerDrop() {
@@ -410,52 +405,67 @@
             requestAnimationFrame(update);
         }
 
+        // ПК УПРАВЛЕНИЕ
         window.addEventListener('keydown', e => {
             if (paused && e.keyCode !== 80 && e.keyCode !== 27) return;
             if (e.keyCode === 37) player.pos.x--, collide(arena, player) && player.pos.x++;
             if (e.keyCode === 39) player.pos.x++, collide(arena, player) && player.pos.x--;
             if (e.keyCode === 40) playerDrop();
-            if (e.keyCode === 38) {
-                const old = player.matrix;
-                player.matrix = player.matrix[0].map((_, i) => player.matrix.map(row => row[i]).reverse());
-                if (collide(arena, player)) player.matrix = old;
-            }
+            if (e.keyCode === 38) playerRotate();
             if (e.keyCode === 80 || e.keyCode === 27) togglePause();
         });
 
-        // СЕНСОР [СУПЕР-ЧУВСТВИТЕЛЬНОСТЬ]
-        let tsX, tsY;
+        // СУПЕР-СЕНСОР: ПРЯМОЙ ДИФФЕРЕНЦИАЛЬНЫЙ МЕТОД
+        let lastX, lastY, startX, startY, startTime;
         const gameArea = document.getElementById('game-area');
 
         gameArea.addEventListener('touchstart', e => { 
-            tsX = e.touches[0].clientX; 
-            tsY = e.touches[0].clientY; 
+            startX = lastX = e.touches[0].clientX; 
+            startY = lastY = e.touches[0].clientY; 
+            startTime = Date.now();
             if (!paused) e.preventDefault(); 
         }, {passive:false});
 
         gameArea.addEventListener('touchmove', e => {
-            if (!paused) e.preventDefault();
+            if (paused) return;
+            e.preventDefault();
+            
+            const currentX = e.touches[0].clientX;
+            const currentY = e.touches[0].clientY;
+            
+            const diffX = currentX - lastX;
+            const diffY = currentY - lastY;
+
+            // Дискретное горизонтальное шагание (15px)
+            if (Math.abs(diffX) > 15) {
+                if (diffX > 0) {
+                    player.pos.x++;
+                    if (collide(arena, player)) player.pos.x--;
+                } else {
+                    player.pos.x--;
+                    if (collide(arena, player)) player.pos.x++;
+                }
+                lastX = currentX; // Сброс точки отсчета для "протаскивания"
+            }
+
+            // Дифференциальное падение (20px)
+            if (diffY > 20) {
+                playerDrop();
+                lastY = currentY; // Сброс точки отсчета
+            }
         }, {passive:false});
 
         gameArea.addEventListener('touchend', e => {
             if (paused) return;
-            const dx = e.changedTouches[0].clientX - tsX;
-            const dy = e.changedTouches[0].clientY - tsY;
-            const absX = Math.abs(dx);
-            const absY = Math.abs(dy);
+            
+            const endX = e.changedTouches[0].clientX;
+            const endY = e.changedTouches[0].clientY;
+            const duration = Date.now() - startTime;
+            const totalDist = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
 
-            if (absX < 10 && absY < 10) {
-                const old = player.matrix;
-                player.matrix = player.matrix[0].map((_, i) => player.matrix.map(row => row[i]).reverse());
-                if (collide(arena, player)) player.matrix = old;
-            }
-            else if (absX > absY) {
-                if (absX > 15) { 
-                    dx > 0 ? (player.pos.x++, collide(arena, player) && player.pos.x--) : (player.pos.x--, collide(arena, player) && player.pos.x++);
-                }
-            }
-            else if (dy > 20) { 
-                playerDrop();
+            // Логика тапа (Поворот)
+            if (duration < 150 && totalDist < 10) {
+                playerRotate();
             }
             e.preventDefault();
         }, {passive:false});
