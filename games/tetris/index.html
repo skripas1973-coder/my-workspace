@@ -166,8 +166,12 @@
             transition: 0.3s;
             width: 100%;
             letter-spacing: 1px;
+            margin-bottom: 5px;
         }
         .btn-reset:hover { background: rgba(102, 252, 241, 0.15); box-shadow: 0 0 15px var(--neon); }
+
+        /* Кнопка паузы видна только на мобильных */
+        .btn-mobile-pause { display: none; }
 
         @media (max-width: 768px) {
             .scripa-header-fixed { display: none; }
@@ -185,6 +189,7 @@
             .key-btn { width: 22px; height: 22px; font-size: 0.6rem; }
             .control-legend { font-size: 0.5rem; text-align: center; }
             .btn-reset { font-size: 0.65rem; padding: 6px; }
+            .btn-mobile-pause { display: block; }
         }
 
         #pause-overlay {
@@ -245,6 +250,7 @@
             </div>
 
             <button class="btn-reset" onclick="resetGame()">СБРОС</button>
+            <button class="btn-reset btn-mobile-pause" onclick="togglePause()">ПАУЗА</button>
         </div>
     </div>
 
