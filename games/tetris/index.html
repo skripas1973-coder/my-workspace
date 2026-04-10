@@ -398,16 +398,16 @@
             if ([80, 27, 32].includes(e.keyCode)) togglePause();
         });
 
-        // SENSOR + ANTI-CHAOS
+        // SENSOR + ANTI-CHAOS (FIXED)
         let lastX, lastY, startX, startY, startTime;
-        let verticalLock = false;
+        let lockDirection = null; // null, 'horizontal', 'vertical'
         const gameArea = document.getElementById('game-area');
 
         gameArea.addEventListener('touchstart', e => { 
             startX = lastX = e.touches[0].clientX; 
             startY = lastY = e.touches[0].clientY; 
             startTime = Date.now();
-            verticalLock = false;
+            lockDirection = null; 
             if (!paused) e.preventDefault(); 
         }, {passive:false});
 
@@ -416,24 +416,35 @@
             e.preventDefault();
             const curX = e.touches[0].clientX;
             const curY = e.touches[0].clientY;
+            
+            const totalDiffX = curX - startX;
+            const totalDiffY = curY - startY;
             const diffX = curX - lastX;
             const diffY = curY - lastY;
 
-            // Блокировка осей (Мертвая зона)
-            if (!verticalLock && Math.abs(curY - startY) > Math.abs(curX - startX) * 1.5 && Math.abs(curY - startY) > 10) {
-                verticalLock = true;
+            // Определение мертвой зоны и фиксация направления
+            if (lockDirection === null) {
+                if (Math.abs(totalDiffX) > 10 || Math.abs(totalDiffY) > 10) {
+                    if (Math.abs(totalDiffY) > Math.abs(totalDiffX) * 1.5) {
+                        lockDirection = 'vertical';
+                    } else if (Math.abs(totalDiffX) > Math.abs(totalDiffY) * 1.2) {
+                        lockDirection = 'horizontal';
+                    }
+                }
             }
 
-            // Горизонталь работает только без лока
-            if (!verticalLock && Math.abs(diffX) > 15) {
-                if (diffX > 0) { player.pos.x++; if(collide(arena, player)) player.pos.x--; }
-                else { player.pos.x--; if(collide(arena, player)) player.pos.x++; }
-                lastX = curX;
-            }
-
-            if (diffY > 20) {
-                playerDrop();
-                lastY = curY;
+            // Движение только по заблокированной оси
+            if (lockDirection === 'horizontal') {
+                if (Math.abs(diffX) > 15) {
+                    if (diffX > 0) { player.pos.x++; if(collide(arena, player)) player.pos.x--; }
+                    else { player.pos.x--; if(collide(arena, player)) player.pos.x++; }
+                    lastX = curX;
+                }
+            } else if (lockDirection === 'vertical') {
+                if (diffY > 20) {
+                    playerDrop();
+                    lastY = curY;
+                }
             }
         }, {passive:false});
 
