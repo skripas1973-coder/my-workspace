@@ -7,6 +7,7 @@
     <link rel="apple-touch-icon" href="../assets/logo_games.png">
     <link rel="manifest" href="../manifest.json">
     <meta name="theme-color" content="#0b0c10">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     
     <style>
         :root { 
@@ -15,7 +16,11 @@
             --accent: #45a29e;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            user-select: none;
+        }
 
         body {
             background: var(--dark-bg);
@@ -24,7 +29,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             min-height: 100vh;
             margin: 0;
             padding: 10px;
@@ -32,7 +37,19 @@
             touch-action: none;
         }
 
-        /* [cite: 1] ЛОГОТИП SCRIPA */
+        /* ФОН «КАТАКОМБЫ ЦИФР» */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+            filter: blur(1px);
+        }
+
+        /* ЛОГОТИП SCRIPA [cite: 1] */
         .scripa-header-fixed {
             position: absolute;
             top: 20px;
@@ -43,135 +60,143 @@
         .main-logo-img {
             width: 240px;
             height: auto;
-            transition: 0.4s;
+            transition: 0.3s;
             image-rendering: -webkit-optimize-contrast;
             display: block;
         }
 
         .main-logo-img:hover {
             filter: drop-shadow(0 0 25px var(--neon)) brightness(1.2);
-            transform: scale(1.03);
         }
 
-        /* КНОПКА В МЕНЮ (ОВАЛ) */
+        /* НАВИГАЦИЯ */
         .btn-menu {
             border: 1px solid var(--neon);
             background: transparent;
             color: var(--neon);
             border-radius: 50px;
-            padding: 8px 30px;
-            font-size: 0.8rem;
+            padding: 6px 20px;
+            font-size: 0.75rem;
             cursor: pointer;
             text-transform: uppercase;
-            margin-bottom: 20px;
-            transition: 0.3s;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             letter-spacing: 1px;
+            margin-bottom: 10px;
+            transition: 0.3s;
         }
-        .btn-menu:hover { background: rgba(102, 252, 241, 0.1); box-shadow: 0 0 15px rgba(102, 252, 241, 0.2); }
+        .btn-menu:hover { background: rgba(102, 252, 241, 0.1); }
 
-        /* [cite: 4] ЗАГОЛОВОК */
+        /* ЗАГОЛОВОК [cite: 4] */
         .game-title {
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             font-weight: bold;
-            letter-spacing: 6px;
+            letter-spacing: 5px;
             text-transform: uppercase;
             color: var(--neon);
-            text-shadow: 0 0 15px rgba(102, 252, 241, 0.4);
-            margin: 0 0 15px 0;
+            text-shadow: 0 0 10px rgba(102, 252, 241, 0.4);
+            margin: 0 0 10px 0;
         }
 
-        /* ГЕОМЕТРИЯ */
+        /* КОНТЕЙНЕР ИГРЫ */
         .main-container {
             display: flex;
-            gap: 25px;
+            gap: 20px;
             align-items: flex-start;
-            max-height: 80vh; 
+            justify-content: center;
+            width: 100%;
+            max-height: 85vh;
         }
 
         .game-side { 
             position: relative; 
             border: 2px solid var(--accent); 
-            background: #000; 
-            box-shadow: 0 0 20px rgba(102, 252, 241, 0.15);
+            background: rgba(0, 0, 0, 0.8); 
+            box-shadow: 0 0 25px rgba(102, 252, 241, 0.1);
         }
         
         canvas#tetris { 
             display: block;
-            height: 65vh; 
+            height: 72vh; 
             width: auto;
             aspect-ratio: 1/2;
+            touch-action: none;
         }
 
         /* ИНФО-ПАНЕЛЬ */
         .info-side { 
             display: flex; 
             flex-direction: column; 
-            width: 200px; 
-            gap: 15px; 
+            width: 180px; 
+            gap: 12px; 
         }
 
         .info-box { 
             background: rgba(31, 40, 51, 0.4); 
             border: 1px solid var(--accent); 
-            padding: 10px; 
+            padding: 8px; 
             border-radius: 4px; 
             text-align: center; 
         }
 
-        .label { color: var(--accent); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 5px; }
-        .value { font-size: 1.4rem; font-weight: bold; color: #fff; }
-        canvas#next { width: 70px; height: 70px; margin: 0 auto; display: block; }
+        .label { color: var(--accent); font-size: 0.55rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 3px; }
+        .value { font-size: 1.2rem; font-weight: bold; color: #fff; }
+        canvas#next { width: 60px; height: 60px; margin: 0 auto; display: block; }
 
         /* КАРТОЧКА УПРАВЛЕНИЯ ПК */
         .controls-card {
             border: 1px solid rgba(102, 252, 241, 0.2);
             border-radius: 12px;
-            padding: 15px;
-            background: rgba(11, 12, 16, 0.5);
+            padding: 12px;
+            background: rgba(11, 12, 16, 0.6);
         }
         .controls-card h3 { 
-            font-size: 0.75rem; color: var(--accent); letter-spacing: 3px; margin: 0 0 12px 0; text-align: center;
+            font-size: 0.7rem; color: var(--accent); letter-spacing: 2px; margin: 0 0 10px 0; text-align: center;
         }
         .keys-grid {
             display: grid;
             grid-template-areas: ". up ." "left down right";
-            gap: 4px; justify-content: center; margin-bottom: 15px;
+            gap: 4px; justify-content: center; margin-bottom: 10px;
         }
         .key-btn {
-            width: 32px; height: 32px; border: 1px solid var(--neon); border-radius: 6px;
-            display: flex; align-items: center; justify-content: center; color: var(--neon); font-size: 0.9rem;
+            width: 30px; height: 30px; border: 1px solid var(--neon); border-radius: 6px;
+            display: flex; align-items: center; justify-content: center; color: var(--neon); font-size: 0.8rem;
         }
-        .control-legend { font-size: 0.7rem; color: #c5c6c7; line-height: 1.6; }
+        .control-legend { font-size: 0.65rem; color: #c5c6c7; line-height: 1.4; }
         .control-legend b { color: var(--neon); }
 
-        /* КНОПКА СБРОС (ОВАЛ) */
+        /* КНОПКА СБРОС */
         .btn-reset {
             border: 1px solid var(--neon);
             background: transparent;
             color: var(--neon);
             border-radius: 50px;
-            padding: 10px;
-            font-size: 0.85rem;
+            padding: 8px;
+            font-size: 0.8rem;
             cursor: pointer;
             text-transform: uppercase;
             transition: 0.3s;
             width: 100%;
             letter-spacing: 1px;
         }
-        .btn-reset:hover { background: rgba(102, 252, 241, 0.15); box-shadow: 0 0 10px var(--neon); }
+        .btn-reset:hover { background: rgba(102, 252, 241, 0.15); box-shadow: 0 0 15px var(--neon); }
 
+        /* АДАПТИВНОСТЬ [cite: 2] */
         @media (max-width: 768px) {
             .scripa-header-fixed { display: none; }
-            .game-title { font-size: 1.4rem; letter-spacing: 3px; }
-            .main-container { gap: 10px; max-height: 85vh; }
-            canvas#tetris { height: 60vh; }
-            .info-side { width: 90px; gap: 8px; }
+            .game-title { font-size: 1.2rem; margin-bottom: 5px; }
+            .btn-menu { padding: 4px 15px; font-size: 0.7rem; margin-bottom: 5px; }
+            
+            .main-container { gap: 8px; }
+            canvas#tetris { height: 75vh; } 
+            
+            .info-side { width: 85px; gap: 8px; }
+            .info-box { padding: 5px; }
             .value { font-size: 0.9rem; }
-            canvas#next { width: 45px; height: 45px; }
+            canvas#next { width: 40px; height: 40px; }
             .controls-card { display: none; }
+            .btn-reset { font-size: 0.7rem; padding: 6px; }
         }
 
         #pause-overlay {
@@ -182,6 +207,8 @@
     </style>
 </head>
 <body>
+
+    <canvas id="bg-canvas"></canvas>
 
     <div class="scripa-header-fixed">
         <a href="../index.html">
@@ -204,17 +231,17 @@
 
         <div class="info-side">
             <div class="info-box">
-                <span class="label">СЛЕДУЮЩАЯ</span>
+                <span class="label">NEXT</span>
                 <canvas id="next" width="80" height="80"></canvas>
             </div>
             
             <div class="info-box">
-                <span class="label">СЧЕТ</span>
+                <span class="label">SCORE</span>
                 <div id="score" class="value">0</div>
             </div>
 
             <div class="controls-card">
-                <h3>УПРАВЛЕНИЕ</h3>
+                <h3>CONTROL</h3>
                 <div class="keys-grid">
                     <div class="key-btn" style="grid-area: up">▲</div>
                     <div class="key-btn" style="grid-area: left">◀</div>
@@ -234,14 +261,39 @@
     </div>
 
     <script>
+        // АНИМАЦИЯ ФОНА «КАТАКОМБЫ ЦИФР»
+        const bgCanvas = document.getElementById('bg-canvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        let width = bgCanvas.width = window.innerWidth;
+        let height = bgCanvas.height = window.innerHeight;
+        const columns = Math.floor(width / 20);
+        const drops = Array(columns).fill(1);
+
+        function drawBackground() {
+            bgCtx.fillStyle = 'rgba(11, 12, 16, 0.1)';
+            bgCtx.fillRect(0, 0, width, height);
+            bgCtx.fillStyle = '#66fcf1';
+            bgCtx.font = '15px monospace';
+            for (let i = 0; i < drops.length; i++) {
+                const text = Math.floor(Math.random() * 10);
+                bgCtx.fillText(text, i * 20, drops[i] * 20);
+                if (drops[i] * 20 > height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+
+        // ЛОГИКА ТЕТРИСА
         const canvas = document.getElementById('tetris');
         const context = canvas.getContext('2d');
         const nextCanvas = document.getElementById('next');
         const nextContext = nextCanvas.getContext('2d');
 
-        // [cite: 5] Масштаб
         context.scale(20, 20);
         nextContext.scale(20, 20);
+
+        const colors = [
+            null, '#66fcf1', '#45a29e', '#00e676', '#ff1744', '#ff9100', '#ffea00', '#2979ff'
+        ];
 
         function createPiece(type) {
             if (type === 'I') return [[0,1,0,0],[0,1,0,0],[0,1,0,0],[0,1,0,0]];
@@ -254,26 +306,13 @@
         }
 
         const arena = Array.from({length: 24}, () => Array(12).fill(0));
-        
-        // ВЕРНУЛИ НЕОНОВЫЕ ЦВЕТА
-        const colors = [
-            null, 
-            '#66fcf1', // I
-            '#45a29e', // L
-            '#00e676', // J
-            '#ff1744', // O
-            '#ff9100', // Z
-            '#ffea00', // S
-            '#2979ff'  // T
-        ];
-
         const player = { pos: {x: 0, y: 0}, matrix: null, next: null, score: 0 };
 
         function drawMatrix(matrix, offset, ctx) {
             matrix.forEach((row, y) => {
                 row.forEach((value, x) => {
                     if (value !== 0) {
-                        ctx.fillStyle = colors[value]; // Использование массива цветов
+                        ctx.fillStyle = colors[value];
                         ctx.fillRect(x + offset.x, y + offset.y, 1, 1);
                         ctx.lineWidth = 0.05; ctx.strokeStyle = '#000';
                         ctx.strokeRect(x + offset.x, y + offset.y, 1, 1);
@@ -337,7 +376,7 @@
             player.matrix = player.next || createPiece(pcs[pcs.length * Math.random() | 0]);
             player.next = createPiece(pcs[pcs.length * Math.random() | 0]);
             player.pos.y = 0;
-            player.pos.x = 5;
+            player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
             if (collide(arena, player)) {
                 arena.forEach(r => r.fill(0));
                 player.score = 0;
@@ -367,10 +406,12 @@
                 if (dropCounter > 1000) playerDrop();
                 draw();
             } else { lastTime = time; }
+            drawBackground();
             requestAnimationFrame(update);
         }
 
         window.addEventListener('keydown', e => {
+            if (paused && e.keyCode !== 80 && e.keyCode !== 27) return;
             if (e.keyCode === 37) player.pos.x--, collide(arena, player) && player.pos.x++;
             if (e.keyCode === 39) player.pos.x++, collide(arena, player) && player.pos.x--;
             if (e.keyCode === 40) playerDrop();
@@ -382,20 +423,47 @@
             if (e.keyCode === 80 || e.keyCode === 27) togglePause();
         });
 
+        // СЕНСОР [СУПЕР-ЧУВСТВИТЕЛЬНОСТЬ]
         let tsX, tsY;
         const gameArea = document.getElementById('game-area');
-        gameArea.addEventListener('touchstart', e => { tsX = e.touches[0].clientX; tsY = e.touches[0].clientY; }, {passive:false});
+
+        gameArea.addEventListener('touchstart', e => { 
+            tsX = e.touches[0].clientX; 
+            tsY = e.touches[0].clientY; 
+            if (!paused) e.preventDefault(); 
+        }, {passive:false});
+
+        gameArea.addEventListener('touchmove', e => {
+            if (!paused) e.preventDefault();
+        }, {passive:false});
+
         gameArea.addEventListener('touchend', e => {
+            if (paused) return;
             const dx = e.changedTouches[0].clientX - tsX;
             const dy = e.changedTouches[0].clientY - tsY;
-            if (Math.abs(dx) < 20 && Math.abs(dy) < 20) {
+            const absX = Math.abs(dx);
+            const absY = Math.abs(dy);
+
+            if (absX < 10 && absY < 10) {
                 const old = player.matrix;
                 player.matrix = player.matrix[0].map((_, i) => player.matrix.map(row => row[i]).reverse());
                 if (collide(arena, player)) player.matrix = old;
             }
-            else if (Math.abs(dx) > Math.abs(dy)) { dx > 35 ? (player.pos.x++, collide(arena, player) && player.pos.x--) : (player.pos.x--, collide(arena, player) && player.pos.x++); }
-            else if (dy > 35) playerDrop();
+            else if (absX > absY) {
+                if (absX > 15) { 
+                    dx > 0 ? (player.pos.x++, collide(arena, player) && player.pos.x--) : (player.pos.x--, collide(arena, player) && player.pos.x++);
+                }
+            }
+            else if (dy > 20) { 
+                playerDrop();
+            }
+            e.preventDefault();
         }, {passive:false});
+
+        window.addEventListener('resize', () => {
+            width = bgCanvas.width = window.innerWidth;
+            height = bgCanvas.height = window.innerHeight;
+        });
 
         playerReset();
         update();
