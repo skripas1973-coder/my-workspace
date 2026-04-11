@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>СКРИПА РЯДОМ: CHESS PRO v3.5</title>
     <style>
         :root { 
@@ -12,6 +13,8 @@
             --accent: #45a29e;
         }
 
+        * { box-sizing: border-box; }
+
         body { 
             background: var(--dark-bg); 
             color: var(--neon); 
@@ -19,12 +22,26 @@
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            min-height: 100vh; 
+            justify-content: center;
+            height: 100vh; 
             margin: 0; 
-            overflow-x: hidden;
+            overflow: hidden;
+            touch-action: manipulation;
         }
 
-        /* УНИВЕРСАЛЬНАЯ ШАПКА */
+        /* MATRIX BACKGROUND */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+            filter: blur(1px);
+        }
+
+        /* УНИВЕРСАЛЬНАЯ ШАПКА SCRIPA */
         .scripa-header-fixed {
             position: absolute;
             top: 20px;
@@ -36,85 +53,95 @@
             width: 240px; 
             height: auto;
             display: block;
-            filter: drop-shadow(0 0 20px rgba(102, 252, 241, 0.5));
+            filter: drop-shadow(0 0 15px rgba(102, 252, 241, 0.4));
             transition: 0.3s;
+            image-rendering: -webkit-optimize-contrast;
         }
-        .main-logo-img:hover { opacity: 0.8; }
+        .main-logo-img:hover { filter: drop-shadow(0 0 25px var(--neon)); opacity: 0.9; }
 
         .header-content {
-            margin-top: 80px;
-            margin-bottom: 20px;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
+            margin-bottom: 15px;
+            z-index: 1;
         }
         
         .back-btn {
             text-decoration: none; color: var(--accent); border: 1px solid var(--accent);
-            padding: 5px 15px; border-radius: 20px; font-size: 11px; text-transform: uppercase; transition: 0.3s;
+            padding: 4px 12px; border-radius: 20px; font-size: 10px; text-transform: uppercase; transition: 0.3s;
+            background: transparent;
         }
         .back-btn:hover { color: var(--neon); border-color: var(--neon); box-shadow: 0 0 10px var(--neon); }
 
         .game-title {
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             font-weight: bold;
-            letter-spacing: 5px;
+            letter-spacing: 4px;
             text-transform: uppercase;
             color: var(--neon);
-            text-shadow: 0 0 15px rgba(102, 252, 241, 0.5);
+            text-shadow: 0 0 10px rgba(102, 252, 241, 0.3);
             margin: 0;
         }
 
-        .game-info { display: flex; gap: 20px; align-items: center; margin-bottom: 10px; }
-        .status { font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 5px var(--neon); min-height: 24px; color: #fff; text-transform: uppercase; }
+        .game-info { display: flex; gap: 20px; align-items: center; margin-bottom: 10px; z-index: 1; }
+        .status { font-weight: bold; letter-spacing: 1px; color: #fff; text-transform: uppercase; font-size: 0.9rem; min-height: 20px; }
 
+        /* ШАХМАТНАЯ ДОСКА */
         .board { 
-            display: grid; grid-template-columns: repeat(8, 60px); grid-template-rows: repeat(8, 60px); 
-            border: 4px solid var(--accent); box-shadow: 0 0 40px rgba(0,0,0,0.5); 
+            display: grid; 
+            grid-template-columns: repeat(8, 50px); 
+            grid-template-rows: repeat(8, 50px); 
+            border: 4px solid var(--accent); 
+            box-shadow: 0 0 30px rgba(0,0,0,0.5); 
+            z-index: 1;
         }
 
         .cell { 
-            width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; 
-            font-size: 42px; cursor: pointer; position: relative; user-select: none;
+            width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; 
+            font-size: 32px; cursor: pointer; position: relative; user-select: none; transition: 0.2s;
         }
         .cell.white { background: var(--cell-white); }
         .cell.black { background: var(--cell-black); }
 
         .white-piece { color: #fff; filter: drop-shadow(0 0 2px #000); }
-        .black-piece { color: var(--accent); filter: drop-shadow(0 0 2px #000); }
+        .black-piece { color: var(--neon); filter: drop-shadow(0 0 2px #000); }
 
-        .selected { background: rgba(102, 252, 241, 0.4) !important; }
+        .selected { background: rgba(102, 252, 241, 0.35) !important; }
         
         .valid-dot::after {
-            content: ""; width: 12px; height: 12px; background: rgba(102, 252, 241, 0.5); 
+            content: ""; width: 10px; height: 10px; background: rgba(102, 252, 241, 0.5); 
             border-radius: 50%; position: absolute;
         }
 
-        .controls { margin: 20px; display: flex; gap: 10px; }
+        .controls { margin-top: 20px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; z-index: 1; }
         button {
             background: transparent; color: var(--neon); border: 1px solid var(--neon);
-            padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 11px; text-transform: uppercase; transition: 0.3s;
+            padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 10px; 
+            text-transform: uppercase; transition: 0.3s; font-family: inherit; outline: none;
         }
-        button:hover { background: var(--neon); color: #000; }
+        button:hover { background: var(--neon); color: #000; box-shadow: 0 0 10px var(--neon); }
         button.active { background: var(--neon); color: #000; }
 
         @media (max-width: 600px) {
-            .scripa-header-fixed { position: relative; top: 0; left: 0; margin-bottom: 20px; }
-            .main-logo-img { width: 160px; }
-            .header-content { margin-top: 20px; }
-            .game-title { font-size: 1.5rem; }
-            .board { grid-template-columns: repeat(8, 40px); grid-template-rows: repeat(8, 40px); }
-            .cell { width: 40px; height: 40px; font-size: 28px; }
+            .scripa-header-fixed { display: none; } /* Убираем логотип */
+            .header-content { margin-top: -20px; } /* Поднимаем контент */
+            .game-title { font-size: 1.4rem; }
+            .board { grid-template-columns: repeat(8, 11.5vw); grid-template-rows: repeat(8, 11.5vw); }
+            .cell { font-size: 24px; }
+            .game-info { flex-direction: column; gap: 5px; }
         }
     </style>
 </head>
 <body>
 
+<canvas id="bg-canvas"></canvas>
+
 <div class="scripa-header-fixed">
     <a href="../index.html">
-        <img src="../assets/logo_games.png" alt="SCRIPA GAMES" class="main-logo-img" title="Вернуться в меню">
+        <img src="../assets/logo_games.png" alt="SCRIPA GAMES" class="main-logo-img">
     </a>
 </div>
 
@@ -137,6 +164,27 @@
 </div>
 
 <script>
+    // MATRIX BACKGROUND LOGIC
+    const bgCanvas = document.getElementById('bg-canvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    let bgW = bgCanvas.width = window.innerWidth;
+    let bgH = bgCanvas.height = window.innerHeight;
+    const drops = Array(Math.floor(bgW / 20)).fill(1);
+
+    function drawBackground() {
+        bgCtx.fillStyle = 'rgba(11, 12, 16, 0.1)';
+        bgCtx.fillRect(0, 0, bgW, bgH);
+        bgCtx.fillStyle = '#66fcf1';
+        bgCtx.font = '15px monospace';
+        for (let i = 0; i < drops.length; i++) {
+            const text = Math.floor(Math.random() * 10);
+            bgCtx.fillText(text, i * 20, drops[i] * 20);
+            if (drops[i] * 20 > bgH && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+        }
+    }
+
+    // GAME ENGINE
     const icons = { 'r':'♜','n':'♞','b':'♝','q':'♛','k':'♚','p':'♟','R':'♖','N':'♘','B':'♗','Q':'♕','K':'♔','P':'♙' };
     const pieceWeights = { 'p': 10, 'n': 30, 'b': 30, 'r': 50, 'q': 90, 'k': 900 };
     let board = [], turn = 'W', selected = null, mode = 'AI', gameOver = false;
@@ -309,10 +357,8 @@
             if (isKingInCheck(turn)) {
                 const winner = turn === 'W' ? "ЧЕРНЫЕ" : "БЕЛЫЕ";
                 document.getElementById('status').innerText = `МАТ! ПОБЕДА: ${winner}`;
-                alert(`МАТ! Победили ${winner}`);
             } else {
                 document.getElementById('status').innerText = "НИЧЬЯ (ПАТ)";
-                alert("ПАТ! Ничья.");
             }
         }
     }
@@ -344,7 +390,19 @@
         render();
     }
 
+    function animate() {
+        drawBackground();
+        requestAnimationFrame(animate);
+    }
+
+    window.onresize = () => {
+        bgW = bgCanvas.width = window.innerWidth;
+        bgH = bgCanvas.height = window.innerHeight;
+        render();
+    };
+
     initGame();
+    animate();
 </script>
 </body>
 </html>
